@@ -6,7 +6,7 @@
 package controller;
 
 import dao.UserDAO;
-import dto.UserDTO;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -30,7 +30,7 @@ public class LoginController extends HttpServlet {
         String username=request.getParameter("username");
         String password=request.getParameter("password");
         if(username!=null && password!=null){
-            UserDTO user=userDao.findByUser(username);
+            User user=userDao.findByUser(username);
         if(user!=null){
             if(user.getPassword().equals(password)){
             request.getSession().setAttribute("user", user);

@@ -4,8 +4,8 @@
  */
 package dao;
 
-import dto.BookDTO;
-import dto.BookVariantsDTO;
+import entity.Book;
+import entity.BookVariants;
 import jakarta.enterprise.concurrent.Asynchronous;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -22,10 +22,10 @@ import utils.DBUtils;
  *
  * @author Admin
  */
-public class BookVariantDAO implements IDAO<BookVariantsDTO, String> {
+public class BookVariantDAO implements IDAO<BookVariants, String> {
 
     @Override
-    public boolean create(BookVariantsDTO entity) {
+    public boolean create(BookVariants entity) {
         String sql = "Insert into BookVariants"
                 + "values(?,?,?,?,?)";
         try {
@@ -47,16 +47,16 @@ public class BookVariantDAO implements IDAO<BookVariantsDTO, String> {
     }
 
     @Override
-    public List<BookVariantsDTO> readAll() {
+    public List<BookVariants> readAll() {
         String sql = "Select * from BookVariants";
 
         try {
-            List<BookVariantsDTO> list = new ArrayList<>();
+            List<BookVariants> list = new ArrayList<>();
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new BookVariantsDTO(rs.getInt("id"), rs.getString("edition"), rs.getString("language"), rs.getInt("bookId"), rs.getBigDecimal("price"), rs.getInt("stock")));
+                list.add(new BookVariants(rs.getInt("id"), rs.getString("edition"), rs.getString("language"), rs.getInt("bookId"), rs.getBigDecimal("price"), rs.getInt("stock")));
             }
             return list;
 
@@ -69,39 +69,36 @@ public class BookVariantDAO implements IDAO<BookVariantsDTO, String> {
     }
 
     @Override
-    public BookVariantsDTO readById(String id) {
+    public BookVariants readById(String id) {
         return null;
     }
 
-    public static BookVariantsDTO readById(int id) {
-        String sql = "select b.id as bId,bv.id as bvId,p.name as pName,a.name as aName,b.image,\n"
-                + "     b.name as bName,b.publishYear,b.description,b.image,bv.language,\n"
-                + "	 bv.price,bv.stock,bv.edition,b.publisherId,b.status\n"
-                + "from BookVariants bv join Book b on bv.bookId=b.id\n"
-                + "     join Publisher p on b.publisherId=p.id\n"
-                + "	 join BookAuthor ba on b.id=ba.bookId\n"
-                + "	 join Author a  on ba.authorId=a.id\n"
-                + "where b.id = ?";
+    public List<BookVariants> readById(int id) {
+        String sql = "select bv.id,bv.language,bv.price,bv.stock,bv.edition\n"
+                + "from Book b join BookVariants bv on b.id=bv.bookId\n"
+                + "where b.id=?";
+        List<BookVariants> list= new ArrayList<>();
         try {
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                BookDTO book=new BookDTO(rs.getInt("bId"), rs.getString("bName"), rs.getInt("publishYear"),rs.getString("image"), rs.getString("description"),rs.getString("status"));
-                return new BookVariantsDTO(rs.getInt("bvId"), rs.getString("edition"), rs.getString("language"), rs.getInt("bId"), rs.getBigDecimal("price"), rs.getInt("stock"), book);
+            
+            while (rs.next()) {
+                
+                list.add(new BookVariants(rs.getInt("id"), rs.getString("edition"), rs.getString("language"), id, rs.getBigDecimal("price"), rs.getInt("stock")));
             }
-            return null;
+            return list;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(BookVariantDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(BookVariantDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return list;
     }
 
     @Override
-    public boolean update(BookVariantsDTO entity) {
+    public boolean update(BookVariants entity) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -111,23 +108,23 @@ public class BookVariantDAO implements IDAO<BookVariantsDTO, String> {
     }
 
     @Override
-    public List<BookVariantsDTO> search(String searchTerm) {
+    public List<BookVariants> search(String searchTerm) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
 
     }
 
-    public List<BookVariantsDTO> searchByBookId(int searchTerm) {
+    public List<BookVariants> searchByBookId(int searchTerm) {
         String sql = "Select * from BookVariants where bookId = ?";
 
         try {
-            List<BookVariantsDTO> list = new ArrayList<>();
+            List<BookVariants> list = new ArrayList<>();
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, searchTerm);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
 
-                list.add(new BookVariantsDTO(rs.getInt("id"), rs.getString("edition"), rs.getString("language"), rs.getInt("bookId"), rs.getBigDecimal("price"), rs.getInt("stock")));
+                list.add(new BookVariants(rs.getInt("id"), rs.getString("edition"), rs.getString("language"), rs.getInt("bookId"), rs.getBigDecimal("price"), rs.getInt("stock")));
             }
             return list;
 
@@ -141,13 +138,15 @@ public class BookVariantDAO implements IDAO<BookVariantsDTO, String> {
 
     public static void main(String[] args) {
         BookVariantDAO bvDao = new BookVariantDAO();
-        List<BookVariantsDTO> list = bvDao.searchByBookId(2);
-        for (BookVariantsDTO b : list) {
+//        List<BookVariantsDTO> list = bvDao.searchByBookId(2);
+//        for (BookVariants b : list) {
+//            System.out.println(b);
+//        }
+        System.out.println();
+        List<BookVariants> book = bvDao.readById(2);
+        for (BookVariants b : book) {
             System.out.println(b);
         }
-        System.out.println();
-        BookVariantsDTO book = bvDao.readById(2);
-        System.out.println(book);
 
     }
 

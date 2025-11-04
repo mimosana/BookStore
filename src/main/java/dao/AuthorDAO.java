@@ -4,32 +4,32 @@
  */
 package dao;
 
-import dto.AuthorDTO;
+import entity.Author;
 import java.util.List;
 
 /**
  *
  * @author Admin
  */
-public class AuthorDAO implements IDAO<AuthorDTO, String>{
+public class AuthorDAO implements IDAO<Author, String>{
 
     @Override
-    public boolean create(AuthorDTO entity) {
+    public boolean create(Author entity) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public List<AuthorDTO> readAll() {
+    public List<Author> readAll() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public AuthorDTO readById(String id) {
+    public Author readById(String id) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public boolean update(AuthorDTO entity) {
+    public boolean update(Author entity) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -39,7 +39,7 @@ public class AuthorDAO implements IDAO<AuthorDTO, String>{
     }
 
     @Override
-    public List<AuthorDTO> search(String searchTerm) {
+    public List<Author> search(String searchTerm) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

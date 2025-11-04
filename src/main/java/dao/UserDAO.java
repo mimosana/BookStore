@@ -4,7 +4,7 @@
  */
 package dao;
 
-import dto.UserDTO;
+import entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,10 +19,10 @@ import utils.DBUtils;
  *
  * @author Admin
  */
-public class UserDAO implements IDAO<UserDTO, String>{
+public class UserDAO implements IDAO<User, String>{
 
     @Override
-    public boolean create(UserDTO entity) {
+    public boolean create(User entity) {
         String sql="Insert into Users(userName,firstName,lastName, address,email, password)"
                 + "values(?,?,?,?,?,?)";
         try {
@@ -47,15 +47,15 @@ public class UserDAO implements IDAO<UserDTO, String>{
     }
 
     @Override
-    public List<UserDTO> readAll() {
+    public List<User> readAll() {
         String sql="Select * from Users";
         try {
-            List<UserDTO> list=new ArrayList<>();
+            List<User> list=new ArrayList<>();
             Connection conn=DBUtils.getConnection();
             PreparedStatement ps=conn.prepareCall(sql);
             ResultSet rs=ps.executeQuery();
             while(rs.next()){
-                UserDTO user= new UserDTO(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
+                User user= new User(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
                 list.add(user);
             }
             return list;
@@ -68,7 +68,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
     }
 
     @Override
-    public UserDTO readById(String id) {
+    public User readById(String id) {
         String sql="Select * from Users where userId=?";
         try {
             Connection conn=DBUtils.getConnection();
@@ -76,7 +76,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
             ps.setString(1, id);
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
-               return new UserDTO(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
+               return new User(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,7 +85,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
         }
         return null;
     }
-    public UserDTO findByUser(String username) {
+    public User findByUser(String username) {
         String sql="Select * from Users where userName=?";
         try {
             Connection conn=DBUtils.getConnection();
@@ -94,7 +94,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
            
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
-                return new UserDTO(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
+                return new User(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -104,7 +104,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
         return null;
     }
     
-    public UserDTO findByEmail(String email) {
+    public User findByEmail(String email) {
         String sql="Select * from Users where email=?";
         try {
             Connection conn=DBUtils.getConnection();
@@ -113,7 +113,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
            
             ResultSet rs=ps.executeQuery();
             if(rs.next()){
-                return new UserDTO(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
+                return new User(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -124,7 +124,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
     }
 
     @Override
-    public boolean update(UserDTO entity) {
+    public boolean update(User entity) {
         String sql="Update Users set userName=?,firstName=?,lastName=?,address=?,email=?,role=?,password=?,status=?"
                 + "where userId=?";
         try {
@@ -167,7 +167,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
     }
 
     @Override
-    public List<UserDTO> search(String searchTerm) {
+    public List<User> search(String searchTerm) {
         String sql="Select * from Users"
                 + "where userName=?"
                 + "or firstName=?"
@@ -176,7 +176,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
                 + "or role=?"
                 + "or isActive=?";
         try {
-            List<UserDTO> list=new ArrayList<>();
+            List<User> list=new ArrayList<>();
             String searchPattern="%"+searchTerm+"%";
             Connection conn=DBUtils.getConnection();
             PreparedStatement ps=conn.prepareCall(sql);
@@ -186,7 +186,7 @@ public class UserDAO implements IDAO<UserDTO, String>{
             ps.setString(4, searchPattern);
             ResultSet rs=ps.executeQuery();
             while(rs.next()){
-                UserDTO user= new UserDTO(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
+                User user= new User(rs.getInt("id"), rs.getNString("userName"), rs.getNString("firstName"), rs.getString("lastName"), rs.getString("address"), rs.getString("email"), rs.getString("role"),rs.getString("status"),rs.getString("password"));
                 list.add(user);
             }
             return list;
@@ -200,10 +200,10 @@ public class UserDAO implements IDAO<UserDTO, String>{
     }
     public static void main(String[] args) {
         UserDAO userDAO=new UserDAO();
-        List<UserDTO> list =userDAO.readAll();
-        UserDTO user=userDAO.findByUser("ngocanh");
+        List<User> list =userDAO.readAll();
+        User user=userDAO.findByUser("ngocanh");
         System.out.println(user);
-//        for(UserDTO user:list){
+//        for(User user:list){
 //            System.out.println(user);
 //        }
         

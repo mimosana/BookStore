@@ -6,8 +6,9 @@ package controller;
 
 import dao.BookDAO;
 import dao.BookVariantDAO;
-import dto.BookDTO;
-import dto.BookVariantsDTO;
+import entity.Book;
+import entity.BookVariants;
+import entity.Rating;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import service.BookService;
 
 /**
  *
@@ -25,47 +27,63 @@ import java.util.List;
 @WebServlet(name = "BookController", urlPatterns = {"/book"})
 public class BookController extends HttpServlet {
 
-    private String displayBook(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String url = "user/homepage.jsp";
-        List<BookDTO> listTopSeller;
-        List<BookDTO> listNewBook;
-        try {
-            listTopSeller = BookDAO.bookBestSeller();
-            listNewBook = BookDAO.findNewestBooks(10);
-        } catch (Exception e) {
-            e.printStackTrace();
-            listTopSeller = new ArrayList<>();
-            listNewBook = new ArrayList<>();
-        }
-        request.setAttribute("topSeller", listTopSeller);
-        request.setAttribute("newBook", listNewBook);
-        return url;
-    }
-    private String displayDetailBook(HttpServletRequest request, HttpServletResponse response,String id)
-            throws ServletException, IOException {
-        String url="user/detail.jsp";
-        BookDTO book;
-        try {
-            int productId=Integer.parseInt(id);
-            book=BookDAO.readById(productId);
-        } catch (Exception e) {
-            book=null;
-        }
-        request.setAttribute("detailBook", book);
-        return url;
-    }
-
+    private BookService bookService = new BookService();
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String page = request.getParameter("page");
-        String productid=request.getParameter("productid");
         String url = "";
         if ("homepage".equals(page)) {
-            url = displayBook(request, response);
-        }else if("detail".equals(page)){
-            url=displayDetailBook(request, response, productid);    
+            url="user/homepage.jsp";
+            List<Book> listTopSeller=new ArrayList<>();
+            List<Book> listNewBook=new ArrayList<>();
+            try {
+                 listTopSeller = bookService.getBestSellerBook();
+                 listNewBook = bookService.getNewestBook();
+
+            } catch (Exception e) {    
+               e.printStackTrace();
+               request.setAttribute("error", "Không thể tại được do lỗi hệ thống");
+            }
+            request.setAttribute("topSeller", listTopSeller);
+            request.setAttribute("newBook", listNewBook);
+        } else if ("detail".equals(page)) {
+            String productid = request.getParameter("productid");
+            
+            try{
+                Book book=bookService.displayDetailBook(productid);
+            if(book==null){ 
+                url="user/detail.jsp";
+                request.setAttribute("errorMessage", "Không thể tìm thấy sách yêu cầu"); 
+            }else{
+                url="user/detail.jsp";
+                List<Rating> listRating=bookService.getRatingOfBook(book.getBookId());
+                request.setAttribute("detailBook", book);
+                request.setAttribute("listRating", listRating);
+            }
+            }catch(IllegalArgumentException i){
+                request.setAttribute("errorMessage", i.getMessage());
+            }catch(Exception e){
+                request.setAttribute("errorMessage", e.getMessage());
+            }
+        }else if("shop".equals(page)){
+            String index=request.getParameter("index");
+            if(index!=null){
+                url="user/shop.jsp";
+                int endPage=bookService.countBook(12);
+                List<Book> list=bookService.getBookByIndex(Integer.parseInt(index));
+                if(!list.isEmpty()){
+                    for(Book b:list){
+                        int bookId=b.getBookId();
+                        b.setVariants(bookService.getVariantByBook(bookId));
+                    }
+                }
+                request.setAttribute("endP", endPage);
+                request.setAttribute("list", list);
+                request.setAttribute("curIndex", index);
+            }
+            
         }
         request.getRequestDispatcher(url).forward(request, response);
     }

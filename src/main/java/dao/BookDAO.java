@@ -4,10 +4,10 @@
  */
 package dao;
 
-import dto.AuthorDTO;
-import dto.BookDTO;
-import dto.BookVariantsDTO;
-import dto.PublisherDTO;
+import entity.Author;
+import entity.Book;
+import entity.BookVariants;
+import entity.Publisher;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,10 +24,10 @@ import utils.DBUtils;
  *
  * @author Admin
  */
-public class BookDAO implements IDAO<BookDTO, String> {
+public class BookDAO implements IDAO<Book, String> {
 
     @Override
-    public boolean create(BookDTO entity) {
+    public boolean create(Book entity) {
         String sql = "Insert into Book"
                 + "values(?,?,?,?)";
         try {
@@ -39,84 +39,72 @@ public class BookDAO implements IDAO<BookDTO, String> {
             ps.setString(4, entity.getStatus());
             int n = ps.executeUpdate();
             return n > 0;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.err.println("SQL error while fetching ratings for newest book ");
+            return false;
         }
-        return false;
     }
 
     @Override
-    public List<BookDTO> readAll() {
+    public List<Book> readAll() {
         String sql = "Select * from Book";
         try {
-            List<BookDTO> list = new ArrayList<>();
+            List<Book> list = new ArrayList<>();
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new BookDTO(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status")));
+                list.add(new Book(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status")));
             }
             return list;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.err.println("SQL error while fetching ratings for newest book ");
+            return new ArrayList<>();
         }
-        return null;
     }
 
     @Override
-    public BookDTO readById(String id) {
+    public Book readById(String id) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public static BookDTO readById(int id) {
-        String sql = "select b.id as bId, b.name as bName, b.publishYear, b.image, b.status, b.description,\n"
-                + "       a.id as authorId, a.name as authorName,\n"
-                + "       p.id as publisherId, p.name as pName,\n"
-                + "       bv.id as bvId, bv.edition, bv.language, bv.price, bv.stock\n"
-                + "from Book b \n"
-                + "join Publisher p on b.publisherId = p.id\n"
-                + "join Author a on a.id = b.authorId\n"
-                + "left join BookVariants bv on b.id = bv.bookId\n" // Dùng LEFT JOIN
-                + "where b.id = ?";
+    public Book readById(int id) {
+        String sql = "SELECT b.id as bId, b.name as bName, b.publishYear, b.image, b.description, b.status, "
+                + "       b.authorId, b.publisherId, "
+                + // Lấy cả ID để gán
+                "       a.name as authorName, p.name as pName "
+                + "FROM Book b "
+                + "JOIN Author a ON b.authorId = a.id "
+                + "JOIN Publisher p ON b.publisherId = p.id "
+                + "WHERE b.id = ?";
         try {
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            BookDTO book = null;
-            while (rs.next()) {
-                if (book == null) {
-                    book = new BookDTO(rs.getInt("bId"), rs.getString("bName"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status"));
-                    PublisherDTO publisher = new PublisherDTO();
-                    AuthorDTO author = new AuthorDTO();
-                    publisher.setPublisherId(rs.getInt("publisherId"));
-                    publisher.setName(rs.getString("pName"));
-                    book.setPublisher(publisher);
-                    author.setAuthorId(rs.getInt("authorId"));
-                    author.setName(rs.getString("authorName"));
-                    book.getAuthour();
-                    book.setVariants(new ArrayList<>());
-                }
+            if (rs.next()) {
+                Book book = new Book(rs.getInt("bId"), rs.getString("bName"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status"));
+                Publisher publisher = new Publisher();
+                Author author = new Author();
+                publisher.setPublisherId(rs.getInt("publisherId"));
+                publisher.setName(rs.getString("pName"));
+                book.setPublisher(publisher);
+                author.setAuthorId(rs.getInt("authorId"));
+                author.setName(rs.getString("authorName"));
+                book.setAuthor(author);
+                return book;
 
-                // Tạo variant
-                BookVariantsDTO bookVar = new BookVariantsDTO(rs.getInt("bvId"), rs.getString("edition"), rs.getString("language"), rs.getInt("bId"), rs.getBigDecimal("price"), rs.getInt("stock"), book);
-                book.getVariants().add(bookVar);
             }
 
-            return book;
+            return new Book();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("SQL error while fetching ratings for newest book ");
+            return new Book();
         }
-
-        return null;
     }
 
     @Override
-    public boolean update(BookDTO entity) {
+    public boolean update(Book entity) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -127,28 +115,26 @@ public class BookDAO implements IDAO<BookDTO, String> {
 
     @Override
     //Search sách 
-    public List<BookDTO> search(String searchTerm) {
+    public List<Book> search(String searchTerm) {
         String sql = "Select * from Book where id =";
         try {
-            List<BookDTO> list = new ArrayList<>();
+            List<Book> list = new ArrayList<>();
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, searchTerm);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new BookDTO(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status")));
+                list.add(new Book(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status")));
             }
             return list;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.err.println("SQL error while fetching ratings for newest book ");
+            return new ArrayList<>();
         }
-        return null;
     }
 
     //Tính ra 6 sản phẩm có số lượt mua cao
-    public static List<BookDTO> bookBestSeller() {
+    public List<Book> bookBestSeller() {
         String sql
                 = "SELECT "
                 + "  bo.*, b.id AS bookVariant, b.price "
@@ -162,8 +148,8 @@ public class BookDAO implements IDAO<BookDTO, String> {
                 + "JOIN BookVariants b ON A.bookVarId = b.id "
                 + "JOIN Book bo ON bo.id = b.bookId "
                 + "ORDER BY A.NumberOfBuyers DESC";
-        List<BookDTO> list = new ArrayList<>();
-        Map<Integer, BookDTO> bookMap = new HashMap<>();
+        List<Book> list = new ArrayList<>();
+        Map<Integer, Book> bookMap = new HashMap<>();
 
         try (Connection conn = DBUtils.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -171,9 +157,9 @@ public class BookDAO implements IDAO<BookDTO, String> {
                 int currentId = rs.getInt("id");
 
                 // Kiểm tra book đã có trong map chưa
-                BookDTO book = bookMap.get(currentId);
+                Book book = bookMap.get(currentId);
                 if (book == null) {
-                    book = new BookDTO(
+                    book = new Book(
                             rs.getInt("id"),
                             rs.getNString("name"),
                             rs.getInt("publishYear"),
@@ -186,7 +172,7 @@ public class BookDAO implements IDAO<BookDTO, String> {
                 }
 
                 // Tạo variant
-                BookVariantsDTO bookVar = new BookVariantsDTO();
+                BookVariants bookVar = new BookVariants();
                 bookVar.setBookId(currentId);
                 bookVar.setBookVarId(rs.getInt("bookVariant"));
                 bookVar.setPrice(rs.getBigDecimal("price"));
@@ -196,14 +182,13 @@ public class BookDAO implements IDAO<BookDTO, String> {
             list.addAll(bookMap.values());
             return list;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("SQL error while fetching ratings for bestseller book ");
+            return new ArrayList<>();
         }
-
-        return new ArrayList<>();
     }
 
     // Đổi tên hàm để rõ nghĩa hơn và thêm tham số
-    public static List<BookDTO> findNewestBooks(int numberOfBooks) {
+    public List<Book> findNewestBooks(int numberOfBooks) {
 
         // Câu SQL đã sửa (dùng cú pháp SQL Server làm ví dụ)
         // Nó sử dụng PreparedStatement, vì vậy chúng ta dùng '?' cho an toàn
@@ -214,20 +199,20 @@ public class BookDAO implements IDAO<BookDTO, String> {
                 + ")\n"
                 + "order by b.id desc";
 
-        List<BookDTO> list = new ArrayList<>();
-        Map<Integer, BookDTO> bookMap = new HashMap<>();
+        List<Book> list = new ArrayList<>();
+        Map<Integer, Book> bookMap = new HashMap<>();
 
         // Sửa lại try-with-resources để gán tham số '?'
         try (Connection conn = DBUtils.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-           ps.setInt(1, numberOfBooks);
+            ps.setInt(1, numberOfBooks);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int currentId = rs.getInt("id");
 
                     // Kiểm tra book đã có trong map chưa
-                    BookDTO book = bookMap.get(currentId);
+                    Book book = bookMap.get(currentId);
                     if (book == null) {
-                        book = new BookDTO(
+                        book = new Book(
                                 rs.getInt("id"),
                                 rs.getNString("name"),
                                 rs.getInt("publishYear"),
@@ -240,32 +225,69 @@ public class BookDAO implements IDAO<BookDTO, String> {
                     }
 
                     // Tạo variant
-                    BookVariantsDTO bookVar = new BookVariantsDTO();
+                    BookVariants bookVar = new BookVariants();
                     bookVar.setBookId(currentId);
                     bookVar.setBookVarId(rs.getInt("bookVariant"));
                     bookVar.setPrice(rs.getBigDecimal("price"));
 
-                    // Đảm bảo bạn dùng getVariants()
                     book.getVariants().add(bookVar);
                 }
-            } // rs.close()
+            }
 
             list.addAll(bookMap.values());
             return list;
 
         } catch (Exception e) {
-            e.printStackTrace();
-        } // conn.close(), ps.close()
+            System.err.println("SQL error while fetching ratings for newest book ");
+            return new ArrayList<>();
+        }
 
-        return new ArrayList<>(); // Trả về rỗng nếu có lỗi
+    }
+
+    //dem trong database có bao nhieu account
+    public int getTotalBook() {
+        String sql = "select count(*) from Book";
+        try {
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.err.println("SQL error while fetching ratings for newest book ");
+        }
+        return 0;
+    }
+
+    public List<Book> pagingBook(int index) {
+        List<Book> list = new ArrayList<>();
+        String sql = "select *\n"
+                + "from Book\n"
+                + "order by id\n"
+                + "offset ? rows fetch next 12 row only";
+        try {
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, (index-1)*12);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Book(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status")));
+            }
+            return list;
+        } catch (Exception e) {
+            System.err.println("SQL error while fetching ratings for newest book ");
+            return new ArrayList<>();
+        }    
     }
 
     public static void main(String[] args) {
-        BookDTO book = BookDAO.readById(4);
-        System.out.println(book);
-//        for (BookDTO b : list) {
-//            System.out.println(b);
-//        }
+        BookDAO book = new BookDAO();
+        System.out.println(book.getTotalBook());
+       List<Book> list=book.pagingBook(1);
+       for(Book b:list){
+           System.out.println(b);
+       }
     }
 
 }

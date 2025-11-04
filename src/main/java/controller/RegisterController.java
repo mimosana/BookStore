@@ -6,7 +6,7 @@
 package controller;
 
 import dao.UserDAO;
-import dto.UserDTO;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -61,7 +61,7 @@ public class RegisterController extends HttpServlet {
             request.setAttribute("confirmPass", "Passwords do not match.");
         }else{
             url="user/homepage.jsp";
-            userDao.create(new UserDTO(userName, firstName, lastName, address, email,password));
+            userDao.create(new User(userName, firstName, lastName, address, email,password));
         }
         
         request.getRequestDispatcher(url).forward(request, response);
