@@ -39,11 +39,11 @@
         #filter-options-container {
             /* << SỬA LỖI: Đã chuyển thành cấu trúc dòng chảy bình thường >> */
             /* Vẫn giữ position: absolute để nó hiển thị sát dưới nút bấm */
-            position: absolute; 
+            position: relative; 
             top: 100%; 
             left: 0; 
             z-index: 1000;
-            width: 650px; 
+            width: 1600px; 
             max-width: 90vw;
             margin: 10px 0 0 0; 
             
@@ -170,6 +170,7 @@
                     max-width: 20%;
                 }
             }
+            
         
     </style>
 </head>
@@ -193,6 +194,8 @@
                         
                         <!-- Nút Trigger -->
                         <div class="filter-container-wrapper">
+                            <form action="${pageContext.request.contextPath}/book" method="GET" id="filter-form">
+            <input type="hidden" name="page" value="shop">
                             <button id="filter-toggle-btn" type="button" class="btn border dropdown-toggle bg-primary text-white" style="border-color: #FFD333 !important;">
                                 <i class="fa fa-filter"></i> Bộ Lọc Sản Phẩm
                             </button>
@@ -201,74 +204,53 @@
                             <div id="filter-options-container">
                                 
                                 <h5 class="mb-3 text-dark">Tùy Chọn Lọc</h5>
-                                
-                                <div class="filter-group filter-row" data-filter="category">
-                                    <h6 class="filter-group-title text-dark">Thể Loại</h6>
-                                    <div class="filter-options">
-                                        <span class="option active" data-value="all">Tất cả</span>
-                                        <span class="option" data-value="fiction">Tiểu thuyết</span>
-                                        <span class="option" data-value="non-fiction">Phi hư cấu</span>
-                                        <span class="option" data-value="science">Khoa học</span>
-                                        <span class="option" data-value="business">Kinh doanh</span>
-                                        <span class="option" data-value="novel">Truyện dài</span>
-                                    </div>
-                                </div>
+                                <c:if test="${not empty listC}">
+                <div class="filter-group filter-row">
+                    <h6 class="filter-group-title text-dark">Thể Loại</h6>
+                    <select name="category" class="custom-select filter-select">
+                        <option value="all" selected>Tất cả</option>
+                        <c:forEach var="c" items="${listC}">
+                            <option value="${c.name}">${c.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+            </c:if>
+                                    
 
-                                <div class="filter-group filter-row" data-filter="author">
-                                    <h6 class="filter-group-title text-dark">Tác Giả</h6>
-                                    <div class="filter-options">
-                                        <span class="option active" data-value="all">Tất cả</span>
-                                        <span class="option" data-value="nn-anh">Nguyễn Nhật Ánh</span>
-                                        <span class="option" data-value="d-carnegie">Dale Carnegie</span>
-                                        <span class="option" data-value="h-murakami">Haruki Murakami</span>
-                                    </div>
-                                </div>
-
-                                <div class="filter-group filter-row" data-filter="publisher">
-                                    <h6 class="filter-group-title text-dark">Nhà Xuất Bản</h6>
-                                    <div class="filter-options">
-                                        <span class="option active" data-value="all">Tất cả</span>
-                                        <span class="option" data-value="nhanam">Nhã Nam</span>
-                                        <span class="option" data-value="tre">NXB Trẻ</span>
-                                        <span class="option" data-value="vanhoc">NXB Văn Học</span>
-                                    </div>
-                                </div>
-                                
+                                <c:if test="${not empty listA}">
+                <div class="filter-group filter-row">
+                    <h6 class="filter-group-title text-dark">Tác Giả</h6>
+                    <select name="author" class="custom-select filter-select">
+                        <option value="all" selected>Tất cả</option>
+                        <c:forEach var="a" items="${listA}">
+                            <option value="${a.name}">${a.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+            </c:if>
+                                    
+                               
+                                <c:if test="${not empty listP}">
+                <div class="filter-group filter-row">
+                    <h6 class="filter-group-title text-dark">Nhà Xuất Bản</h6>
+                    <select name="publisher" class="custom-select filter-select">
+                        <option value="all" selected>Tất cả</option>
+                        <c:forEach var="p" items="${listP}">
+                            <option value="${p.name}">${p.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+            </c:if>
                                 <div class="filter-actions">
-                                    <button id="apply-filter-btn" class="btn btn-primary btn-sm apply-btn">Lọc</button>
+                                    <button type="submit" id="apply-filter-btn" class="btn btn-primary btn-sm apply-btn">Lọc</button>
                                 </div>
                             </div>
+                            </form>
+                       
                         </div>
                     </div>
                     
-                    <!-- SEARCH & SORT (RIGHT) -->
-                    <div class="d-flex align-items-center">
-                        
-                        <!-- Search Form (Thu nhỏ lại: width: 200px) -->
-                        <form action="" class="mr-3" style="width: 300px;"> 
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Tìm kiếm...">
-                                <div class="input-group-append">
-                                    <span class="input-group-text bg-transparent text-primary">
-                                        <i class="fa fa-search"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
-
-                        <!-- SORT BY DROPDOWN -->
-                        <div class="dropdown">
-                            <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                        Sort by
-                                    </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Latest</a>
-                                <a class="dropdown-item" href="#">Popularity</a>
-                                <a class="dropdown-item" href="#">Best Rating</a>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
