@@ -260,34 +260,70 @@ public class BookDAO implements IDAO<Book, String> {
         return 0;
     }
 
-    public List<Book> pagingBook(int index) {
-        List<Book> list = new ArrayList<>();
-        String sql = "select *\n"
-                + "from Book\n"
-                + "order by id\n"
-                + "offset ? rows fetch next 12 row only";
+    public int countByFilter(String author, String publisher, String category) {
+        String sql = "select count(distinct b.id)\n"
+                + "from Book b join BookVariants bv on b.id=bv.bookId\n"
+                + "      join Author a on a.id=b.authorId\n"
+                + "	  join Publisher p on p.id=b.publisherId\n"
+                + "	  join BookCategory bc on bc.bookId=b.id\n"
+                + "	  join Category c on c.id=bc.categoryId\n"
+                + "where c.name like ? and p.name like ? and a.name like ?";
         try {
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, (index-1)*12);
+            ps.setString(1, "%" + category + "%");
+            ps.setString(2, "%" + publisher + "%");
+            ps.setString(3, "%" + author + "%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new Book(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), rs.getString("description"), rs.getString("status")));
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.err.println("SQL error while count book ");
+        }
+        return 0;
+    }
+
+    public List<Book> pagingBook(String author,String publisher,String category,int index) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT distinct b.id, b.image, b.status, b.name,b.publishYear\n"
+                + "FROM Book b \n"
+                + "JOIN BookVariants bv ON b.id = bv.bookId\n"
+                + "JOIN Author a ON a.id = b.authorId\n"
+                + "JOIN Publisher p ON p.id = b.publisherId\n"
+                + "JOIN BookCategory bc ON bc.bookId = b.id\n"
+                + "JOIN Category c ON c.id = bc.categoryId\n"
+                + "where c.name like ? and p.name like ? and a.name like ?\n"
+                + "ORDER BY b.id  \n"
+                + "OFFSET ? ROWS \n"
+                + "FETCH NEXT 12 ROWS ONLY; ";
+        try {
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%"+category+"%");
+            ps.setString(2, "%"+publisher+"%");
+            ps.setString(3, "%"+author+"%");
+            ps.setInt(4, (index - 1) * 12);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Book(rs.getInt("id"), rs.getNString("name"), rs.getInt("publishYear"), rs.getString("image"), "", rs.getString("status")));
             }
             return list;
         } catch (Exception e) {
-            System.err.println("SQL error while fetching ratings for newest book ");
+            System.err.println("SQL error while fetching book according to filter ");
             return new ArrayList<>();
-        }    
+        }
     }
 
     public static void main(String[] args) {
         BookDAO book = new BookDAO();
-        System.out.println(book.getTotalBook());
-       List<Book> list=book.pagingBook(1);
-       for(Book b:list){
-           System.out.println(b);
-       }
+//        System.out.println(book.getTotalBook());
+//        List<Book> list = book.pagingBook(1);
+//        for (Book b : list) {
+//            System.out.println(b);
+//        }
+       int count= book.countByFilter(" ", " ", "Phiêu lưu ly kì");
+        System.out.println(count);
     }
 
 }

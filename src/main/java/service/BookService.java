@@ -4,11 +4,17 @@
  */
 package service;
 
+import dao.AuthorDAO;
 import dao.BookDAO;
 import dao.BookVariantDAO;
+import dao.CategoryDAO;
+import dao.PublisherDAO;
 import dao.RatingDAO;
+import entity.Author;
 import entity.Book;
 import entity.BookVariants;
+import entity.Category;
+import entity.Publisher;
 import entity.Rating;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,12 +31,18 @@ public class BookService {
     private final BookDAO bookDAO;
     private final BookVariantDAO variantDAO;
     private final RatingDAO ratingDao;
+    private final CategoryDAO categoryDao;
+    private final AuthorDAO authorDao;
+    private final PublisherDAO publisherDao;
     
 
     public BookService() {
         this.bookDAO= new BookDAO();
         this.variantDAO= new BookVariantDAO();
         this.ratingDao= new RatingDAO();
+        this.categoryDao= new CategoryDAO();
+        this.authorDao= new AuthorDAO();
+        this.publisherDao= new PublisherDAO();
     }
     public List<Book> getNewestBook() throws Exception{
         return bookDAO.findNewestBooks(10);
@@ -98,31 +110,63 @@ public class BookService {
         }
     }
     
-    public int countBook(int bookInPage){
-        int count=bookDAO.getTotalBook();
-        int endPage=count/bookInPage;
-        if(count%bookInPage!=0){
+    public int countBook(String author,String publisher,String category){
+        int count=bookDAO.countByFilter(author, publisher, category);
+        int endPage=count/12;
+        if(count%12!=0){
+            endPage++;
+        }
+        return endPage;  
+    }
+    public int countBook(String search){
+        int count=0;
+        int endPage=count/12;
+        if(count%12!=0){
             endPage++;
         }
         return endPage;  
     }
     
-    public List<Book> getBookByIndex(int index){
-        return bookDAO.pagingBook(index);
+    public List<Book> getBookByIndex(String author,String publisher,String category,int index){
+        return bookDAO.pagingBook(author,publisher,category,index);
     }
     
     public List<BookVariants> getVariantByBook(int bookId){
         return variantDAO.readById(bookId);
     }
     
+    public List<Category> getCategory(){
+        return categoryDao.readAll();
+    }
+    
+    public List<Author> getAuthor(){
+        return authorDao.readAll();
+    }
+    
+    public List<Publisher> getPublisher(){
+        return publisherDao.readAll();
+    }
     
     public static void main(String[] args) {
         BookService bookService=new BookService();
-        Book book=bookService.displayDetailBook("2");
-        List<Rating> listRate=bookService.getRatingOfBook(book.getBookId());
-        System.out.println(book);
-        for(Rating r:listRate){
-            System.out.println(r);
-        }
+//        Book book=bookService.displayDetailBook("2");
+//        List<Rating> listRate=bookService.getRatingOfBook(book.getBookId());
+//        System.out.println(book);
+//        for(Rating r:listRate){
+//            System.out.println(r);
+//        }
+          List<Author> listA = bookService.getAuthor();
+                List<Category> listC = bookService.getCategory();
+                List<Publisher> listP = bookService.getPublisher();
+          for(Author a:listA){
+              System.out.println(a);
+          }
+          
+          for(Category a:listC){
+              System.out.println(a);
+          }
+          for(Publisher a:listP){
+              System.out.println(a);
+          }
     }
 }
