@@ -32,6 +32,26 @@
 
         <!-- Customized Bootstrap Stylesheet -->
         <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet">
+        <style>
+
+            .detail-img-container {
+                width: 100%;
+                height: 450px;
+                overflow: hidden;
+                position: relative;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+
+            .detail-img-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        </style>
     </head>
 
     <body>
@@ -50,8 +70,10 @@
                             <div id="product-carousel" class="carousel slide" data-ride="carousel">
                                 <div class="carousel-inner border">
                                     <div class="carousel-item active">
+                                        <div class="detail-img-container">
 
-                                        <img class="w-100 h-100" src="${bookVar.image}" alt="Image">
+                                            <img class="w-100 h-100" src="${bookVar.image}" alt="Image">
+                                        </div>
                                     </div>
                                 </div>
                                 <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
