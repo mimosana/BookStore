@@ -160,16 +160,53 @@ public class ProductDAO extends DBContext {
     }
     
     //Get detail of product
-//    public Book getBook(int var){
-//        
-//    }
+public Book getBook(int id) {
+    Book book=null;
+    String sql ="SELECT B.*,BV.variant_name,BV.price,BV.stock,BV.variant_id \n" +
+"        FROM Books B\n" +
+"        JOIN BookVariants BV ON B.book_id = BV.book_id\n" +
+"        where B.book_id = ?";
+
+    try {
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+         ResultSet rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            if (book ==null) {
+                book=new Book();
+                book.setBookId(rs.getInt("book_id"));
+                book.setTitle(rs.getString("title"));
+                book.setAuthor(rs.getString("author"));
+                book.setDescription(rs.getString("description"));
+                book.setImage(rs.getString("image"));
+                book.setCategoryId(rs.getInt("category_id"));
+                book.setListVariant(new ArrayList<>());
+            }
+
+            BookVariant variant = new BookVariant();
+            variant.setVariantId(rs.getInt("variant_id"));
+            variant.setBookId(rs.getInt("book_id"));
+            variant.setVariantName(rs.getString("variant_name"));
+            variant.setPrice(rs.getDouble("price"));
+            variant.setStock(rs.getInt("stock"));
+
+            book.getListVariant().add(variant);
+        }
+
+    } catch (SQLException e) {
+        errcode = -2;
+        Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+    }
+
+    return book;
+}
 
     public static void main(String[] args) {
         ProductDAO productDAO=new ProductDAO();
-        List<Book> list=productDAO.filterProduct("","Bìa mềm", 0, 200000, 3);
-        for(Book b:list){
-            System.out.println(b);
-        }
+        Book book = productDAO.getBook(2);
+        System.out.println(book);
     }
 
 }

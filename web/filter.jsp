@@ -152,7 +152,7 @@
                             <c:forEach var="b" items="${listB}">
                                 <div class="group flex flex-col gap-4">
 
-                                    <a href="detail?pid=${b.bookId}" class="aspect-[2/3] w-full bg-[#f0f0f0] rounded-2xl overflow-hidden relative shadow-sm group-hover:shadow-lg transition-all duration-300">
+                                    <a href="detail?pid=${b.bookId}&cateid=${category.categoryId}" class="aspect-[2/3] w-full bg-[#f0f0f0] rounded-2xl overflow-hidden relative shadow-sm group-hover:shadow-lg transition-all duration-300">
                                         <img alt="${b.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${b.image}"/>
                                         
                                         <div class="absolute bottom-0 inset-x-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -164,7 +164,7 @@
                                     </a>
 
                                     <div class="space-y-1">
-                                        <a href="detail?pid=${b.bookId}">
+                                        <a href="detail?pid=${b.bookId}&cateid=${category.categoryId}">
                                             <h3 class="font-bold text-lg text-text-main dark:text-white leading-tight truncate hover:text-primary transition-colors">${b.title}</h3>
                                         </a>
                                         
