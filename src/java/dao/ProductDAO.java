@@ -158,6 +158,11 @@ public class ProductDAO extends DBContext {
         }
         return listB;
     }
+    
+    //Get detail of product
+//    public Book getBook(int var){
+//        
+//    }
 
     public static void main(String[] args) {
         ProductDAO productDAO=new ProductDAO();

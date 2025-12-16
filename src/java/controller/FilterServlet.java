@@ -85,6 +85,7 @@ public class FilterServlet extends HttpServlet {
         }
         System.out.println("categoryid: " + categoryid == null);
         System.out.println("isParse: " + isParse);
+        Category category=categoryDAO.getCategory(cateid);
         listB = productDAO.filterProduct(keyword, variant, minPrice, maxPrice, cateid);
 
         //phân trang
@@ -113,6 +114,8 @@ public class FilterServlet extends HttpServlet {
         request.setAttribute("index", page);
         request.setAttribute("page", num);
         request.setAttribute("categoryid", categoryid);
+        request.setAttribute("category", category);
+        
         request.setAttribute("keyword", keyword);
         request.setAttribute("variant", variant);
         request.setAttribute("min", min);

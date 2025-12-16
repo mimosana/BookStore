@@ -15,10 +15,10 @@
                 </div>
                 
                 <form action="filter" class="hidden md:flex flex-1 max-w-lg" method="get">
-                    <input type="hidden" name="category" value="${categoryId}"/>
-                    <input type="hidden" name="variant" value="${categoryId}"/>
-                    <input type="hidden" name="min_price" value="${categoryId}"/>
-                    <input type="hidden" name="max_price" value="${categoryId}"/>
+                    <input type="hidden" name="category" value="${categoryid}"/>
+                    <input type="hidden" name="variant" value="${variant}"/>
+                    <input type="hidden" name="min_price" value="${min}"/>
+                    <input type="hidden" name="max_price" value="${max}"/>
                     <div class="relative w-full group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <span class="material-symbols-outlined text-text-secondary">search</span>
