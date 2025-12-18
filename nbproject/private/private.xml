@@ -3,15 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/controller/LoginServlet.java</file>
             <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/model/Cart.java</file>
             <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/dao/BookVariantDAO.java</file>
             <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/controller/BookVariantServlet.java</file>
-            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/web/admin/changePassword.jsp</file>
-            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/dao/CategoryDAO.java</file>
-            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/controller/ChangePasswordServlet.java</file>
-            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/dao/CartDAO.java</file>
-            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/dao/DBContext.java</file>
+            <file>file:/D:/Spring2026/PRJ301/Code/project/BookStore2/src/java/model/BookVariant.java</file>
         </group>
     </open-files>
 </project-private>
