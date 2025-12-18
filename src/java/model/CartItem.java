@@ -16,7 +16,9 @@ public class CartItem {
  
     private String bookTitle;
     private String variantName;
-    private double price;
+    private double price; 
+
+    private BookVariant variant;
 
     public CartItem() {}
 
@@ -27,6 +29,11 @@ public class CartItem {
         this.bookTitle = bookTitle;
         this.variantName = variantName;
         this.price = price;
+    }
+     public CartItem(int userId, BookVariant variant, int quantity) {
+        this.userId = userId;
+        this.variant = variant;
+        this.quantity = quantity;
     }
 
     public int getUserId() {
@@ -43,6 +50,20 @@ public class CartItem {
 
     public void setVariantId(int variantId) {
         this.variantId = variantId;
+    }
+    
+   
+
+    
+
+   
+
+    public BookVariant getVariant() {
+        return variant;
+    }
+
+    public void setVariant(BookVariant variant) {
+        this.variant = variant;
     }
 
     public int getQuantity() {
@@ -78,5 +99,14 @@ public class CartItem {
     }
 
     
+    
+    @Override
+    public String toString() {
+        return "CartItem{" + "userId=" + userId + ", variant=" + variant + ", quantity=" + quantity + '}';
+    }
+    
+    
+    
+       
     
 }

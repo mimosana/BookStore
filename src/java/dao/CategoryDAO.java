@@ -1,12 +1,19 @@
 package dao;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Category;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CategoryDAO extends DBContext {
 
+    public CategoryDAO() {
+        super();
+    }
     // Lấy danh sách category + số book
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
@@ -306,6 +313,59 @@ public boolean hasProducts(int categoryId) {
     }
     return false;
 }
+    
+    public List<Category> getAll(){
+        if (conn == null) errcode=-1;
 
- 
+        String sql = "SELECT * FROM Categories";
+        List<Category> list=new ArrayList<>();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Category category = new Category();
+                category.setCategoryId(rs.getInt("category_id"));
+                category.setCategoryName(rs.getString("category_name"));
+               list.add(category);
+            }
+            return list;
+        } catch (SQLException e) {
+            errcode=-2;
+            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+    public Category getCategory(int id){
+        if (conn == null) errcode=-1;
+
+        String sql = "SELECT * FROM Categories";
+        if(id>0){
+            sql+=" where category_id=?";
+        }
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if(id>0){
+            ps.setInt(1, id);
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Category category = new Category();
+                category.setCategoryId(rs.getInt("category_id"));
+                category.setCategoryName(rs.getString("category_name"));
+               return category;
+            }
+        } catch (SQLException e) {
+            errcode=-2;
+            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+    public static void main(String[] args) {
+        CategoryDAO categoryDAO=new CategoryDAO();
+        List<Category> list=categoryDAO.getAll();
+        for(Category b:list){
+            System.out.println(b);
+        }
+    }
+    
 }

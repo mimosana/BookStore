@@ -87,6 +87,7 @@
                             Log In
                         </button>
                     </div>
+                    ${error}
                 </form>
                 <div class="mt-8 pt-6 border-t border-[#eaf3e7] dark:border-[#2a3c25] text-center">
                     <p class="text-text-secondary text-sm font-medium">

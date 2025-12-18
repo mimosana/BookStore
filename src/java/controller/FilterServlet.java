@@ -4,8 +4,7 @@
  */
 package controller;
 
-import dao.BookVariantDAO;
-
+import dao.BookVariantDao;
 import dao.CategoryDAO;
 import dao.ProductDAO;
 import java.io.IOException;
@@ -38,19 +37,62 @@ public class FilterServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
         ProductDAO productDAO = new ProductDAO();
-        List<Book> listB = productDAO.getAll();
-        BookVariantDAO variantDao = new BookVariantDAO();
+        List<Book> listB = new ArrayList<>();
+        BookVariantDao variantDao = new BookVariantDao();
         ArrayList<BookVariant> listV = variantDao.getVariantName();
         CategoryDAO categoryDAO = new CategoryDAO();
-        List<Category> listC = categoryDAO.getAllCategories();
+        List<Category> listC = categoryDAO.getAll();
+
+        String keyword = request.getParameter("keyword");
+        String categoryid = request.getParameter("category");
+        String variant = request.getParameter("variant");
+        String min = request.getParameter("min_price");
+        String max = request.getParameter("max_price");
+        String index = request.getParameter("index");
+        double minPrice = 0, maxPrice = 0;
+
+        try {
+            minPrice = (min == null) ? 0 : Double.parseDouble(min);
+            maxPrice = (max == null) ? 0 : Double.parseDouble(max);
+            if (minPrice < 0 || maxPrice < 0) {
+                throw new NumberFormatException();
+            }
+            if (minPrice > maxPrice) {
+                request.setAttribute("error", true);
+                request.setAttribute("message", "Giá tối thiểu không được lớn hơn giá tối đa");
+                minPrice = 0;
+                maxPrice = 0;
+            }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", true);
+            request.setAttribute("message", "Nhập vào giá >0");
+            minPrice = 0;
+            maxPrice = 0;
+        }
+
+        int cateid = 0;
+        Category category=null;
+        boolean isParse = false;
+        try {
+            if (categoryid != null && !categoryid.trim().isEmpty()) {
+                cateid = Integer.parseInt(categoryid);
+                category=categoryDAO.getCategory(cateid);
+            }
+        } catch (NumberFormatException e) {
+            cateid = 0;
+            request.setAttribute("messageCateID", "Không tìm thấy sản phẩm nào");
+        }
+        
+        listB = productDAO.filterProduct(keyword, variant, minPrice, maxPrice, cateid);
 
         //phân trang
         int numperpage = 6;
         int page = 0;
         int size = listB.size();
         int num = (size % numperpage == 0 ? (size / numperpage) : (size / numperpage) + 1);
-        String index = request.getParameter("index");
         if (index == null) {
             page = 1;
         } else {
@@ -65,6 +107,20 @@ public class FilterServlet extends HttpServlet {
         int end = Math.min(page * numperpage, size);
         List<Book> list = productDAO.getBookByPaging(start, listB, end);
 
+        request.setAttribute("listC", listC);
+        request.setAttribute("listV", listV);
+        request.setAttribute("listB", list);
+        request.setAttribute("index", page);
+        request.setAttribute("page", num);
+        request.setAttribute("categoryid", categoryid);
+        request.setAttribute("category", category);
+        
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("variant", variant);
+        request.setAttribute("min", min);
+        request.setAttribute("max", max);
+
+        request.getRequestDispatcher("filter.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -79,16 +135,7 @@ public class FilterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO productDAO = new ProductDAO();
-        List<Book> listB = productDAO.getAll();
-        BookVariantDAO variantDao = new BookVariantDAO();
-        ArrayList<BookVariant> listV = variantDao.getVariantName();
-        CategoryDAO categoryDAO = new CategoryDAO();
-        List<Category> listC = categoryDAO.getAllCategories();
-        request.setAttribute("listC", listC);
-        request.setAttribute("listV", listV);
-        request.setAttribute("listB", listB);
-        request.getRequestDispatcher("filter.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

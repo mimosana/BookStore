@@ -4,97 +4,102 @@
     Author     : Admin
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+    <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
         <title>The Midnight Library - Book Detail</title>
         <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
         <link href="https://fonts.googleapis.com" rel="preconnect"/>
         <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
         <script id="tailwind-config">
             tailwind.config = {
+                darkMode: "class",
                 theme: {
                     extend: {
                         colors: {
-                            "primary": "#15803d",
-                            "secondary": "#f9fafb",
-                            "accent": "#15803d",
-                            "background": "#ffffff",
-                            "surface": "#ffffff",
-                            "text-main": "#111111",
-                            "text-muted": "#666666",
+                            "primary": "#46ec13",
+                            "background-light": "#ffffff",
+                            "background-dark": "#142210",
+                            "surface-light": "#f9fcf8",
+                            "surface-dark": "#1a2c15",
+                            "text-main": "#111b0d",
+                            "text-secondary": "#5e9a4c",
                         },
                         fontFamily: {
-                            "sans": ["Inter", "sans-serif"],
-                            "serif": ["Playfair Display", "serif"],
+                            "display": ["Manrope", "sans-serif"],
+                            "body": ["Manrope", "sans-serif"],
                         },
-                        borderRadius: {
-                            "DEFAULT": "0.375rem",
-                            "lg": "0.75rem",
-                            "xl": "1rem",
-                            "2xl": "1.5rem",
-                        },
+                        borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
                     },
                 },
             }
         </script>
         <style>
-            .no-scrollbar::-webkit-scrollbar {
-                display: none;
+            ::-webkit-scrollbar {
+                width: 8px;
             }
-            .no-scrollbar {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background-color: #eaf3e7;
+                border-radius: 20px;
             }
         </style>
     </head>
     <body class="bg-background font-sans text-text-main antialiased selection:bg-green-100">
+
         <div class="flex min-h-screen w-full flex-col">
+
             <%@include file="menu.jsp" %>
+            <div id="toast"
+                 class="fixed top-6 right-6 z-50 hidden rounded-lg bg-green-600 px-5 py-3 text-white shadow-lg transition-opacity duration-500">
+                ✅ Đã thêm vào giỏ hàng
+            </div>
+            <c:set var="b" value="${book}"/>
             <main class="flex-1 bg-white">
                 <nav aria-label="Breadcrumb" class="mx-auto max-w-7xl px-6 pt-8 lg:px-8">
                     <ol class="flex items-center space-x-2 text-sm text-text-muted">
                         <li>
-                            <a class="hover:text-text-main transition-colors" href="#">Home</a>
+                            <a class="hover:text-text-main transition-colors" href="home">Trang chủ</a>
                         </li>
                         <li><span class="text-gray-300">/</span></li>
                         <li>
-                            <a class="hover:text-text-main transition-colors" href="#">Fiction</a>
+                            <a class="hover:text-text-main transition-colors" href="filter">Mau sắm</a>
                         </li>
                         <li><span class="text-gray-300">/</span></li>
                         <li>
-                            <span aria-current="page" class="font-medium text-text-main">The Midnight Library</span>
+                            <%-- Sử dụng thông tin category từ đối tượng book hoặc biến category nếu có --%>
+                            <a class="hover:text-text-main transition-colors" href="filter?category=${category.categoryId}">${empty category.categoryName?'Tất cả':category.categoryName}</a>
+                        </li>
+                        <li><span class="text-gray-300">/</span></li>
+                        <li>
+                            <span aria-current="page" class="font-medium text-text-main">${b.title}</span>
                         </li>
                     </ol>
                 </nav>
+
                 <section class="mx-auto max-w-7xl px-6 py-10 lg:px-8 lg:py-16">
                     <div class="lg:grid lg:grid-cols-2 lg:gap-x-16 xl:gap-x-24">
+
                         <div class="relative mx-auto w-full max-w-md lg:max-w-none">
                             <div class="aspect-[2/3] w-full overflow-hidden rounded-xl bg-gray-50 shadow-sm border border-gray-100">
-                                <div class="h-full w-full bg-cover bg-center transition-transform hover:scale-105 duration-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDpb3VjS-DHzCe42mpaonYvLQpzJQ5LJuMeT54tZzpGUeJ8f_lkG4njhcCKSe0SNlsH4qDtpNRU_HqeSTejSZS3RlkkvgXwBvgYkaM8D7UKvzFkcD2fY-48PQJXXUgUjAiASZzkEjsa1XM5w9oMR0Eodhof7twN4OGzsT5gg-Gkkep9QAW5OcLMF0MvQrfx49ZccLMCWuOdsNYZFe4oP1ReuFCJWdmNDHcAc0ZUL0QG32deJOFTtucPsorc3gJRupk_wqWVX-sSysa");'></div>
-                            </div>
-                            <div class="mt-6 flex gap-4 overflow-x-auto no-scrollbar justify-center lg:justify-start">
-                                <button class="h-20 w-16 flex-none rounded-md border-2 border-primary overflow-hidden">
-                                    <div class="h-full w-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDpb3VjS-DHzCe42mpaonYvLQpzJQ5LJuMeT54tZzpGUeJ8f_lkG4njhcCKSe0SNlsH4qDtpNRU_HqeSTejSZS3RlkkvgXwBvgYkaM8D7UKvzFkcD2fY-48PQJXXUgUjAiASZzkEjsa1XM5w9oMR0Eodhof7twN4OGzsT5gg-Gkkep9QAW5OcLMF0MvQrfx49ZccLMCWuOdsNYZFe4oP1ReuFCJWdmNDHcAc0ZUL0QG32deJOFTtucPsorc3gJRupk_wqWVX-sSysa");'></div>
-                                </button>
-                                <button class="h-20 w-16 flex-none rounded-md border border-gray-200 bg-gray-50 overflow-hidden hover:border-gray-400">
-                                    <span class="flex h-full w-full items-center justify-center text-xs text-gray-400 font-serif">Back</span>
-                                </button>
-                                <button class="h-20 w-16 flex-none rounded-md border border-gray-200 bg-gray-50 overflow-hidden hover:border-gray-400">
-                                    <span class="flex h-full w-full items-center justify-center text-xs text-gray-400 font-serif">Spine</span>
-                                </button>
+                                <div class="h-full w-full bg-cover bg-center transition-transform hover:scale-105 duration-700" style='background-image: url("${b.image}");'></div>
                             </div>
                         </div>
+
                         <div class="mt-10 lg:mt-0 flex flex-col h-full">
                             <div class="border-b border-gray-100 pb-8">
                                 <div class="mb-4">
-                                    <h1 class="font-serif text-4xl font-bold tracking-tight text-text-main sm:text-5xl mb-2">The Midnight Library</h1>
-                                    <a class="text-lg text-text-muted hover:text-primary transition-colors underline-offset-4 hover:underline" href="#">Matt Haig</a>
+                                    <h1 class="font-serif text-4xl font-bold tracking-tight text-text-main sm:text-5xl mb-2">${b.title}</h1>
+                                    <h3>Tác giả:<a class="text-lg text-text-muted hover:text-primary transition-colors underline-offset-4 hover:underline" href="#">${b.author}</a></h3>
                                 </div>
                                 <div class="flex items-center gap-4 mb-6">
                                     <div class="flex items-center text-yellow-400">
@@ -106,80 +111,124 @@
                                     </div>
                                     <span class="text-sm text-text-muted border-l border-gray-200 pl-4">1,284 Reviews</span>
                                 </div>
-                                <div class="flex items-end gap-4 mb-8">
-                                    <p class="text-3xl font-serif font-bold text-text-main">$13.29</p>
-                                    <p class="text-lg text-gray-400 line-through mb-1.5">$26.00</p>
-                                    <span class="mb-1.5 rounded bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">In Stock</span>
+
+                                <%-- PHẦN GIÁ VÀ TỒN KHO: Sử dụng variant đầu tiên làm mặc định --%>
+                                <div class="flex items-end gap-4 mb-6">
+                                    <p class="text-3xl font-serif font-bold text-text-main" id="current-price">
+                                        <c:choose>
+                                            <c:when test="${not empty bookV}">
+                                                <fmt:formatNumber type="currency" value="${bookV.price}"/>
+                                            </c:when>
+                                            <c:when test="${not empty b.listVariant[0]}">
+                                                <fmt:formatNumber type="currency" value="${b.listVariant[0].price}"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                                N/A
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p>
+
+                                    <div id="stock-info" class="mb-1.5">
+                                        <c:choose>
+                                            <c:when test="${not empty bookV}">
+                                                <c:set var="defaultStock" value="${bookV.stock}" />
+                                                <c:choose>
+                                                    <c:when test="${defaultStock > 0}">
+                                                        <span class="rounded bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">Còn hàng (${defaultStock} sản phẩm)</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">Hết hàng</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:when>
+                                            <c:when test="${not empty b.listVariant}">
+                                                <c:set var="defaultStock" value="${b.listVariant[0].stock}" />
+                                                <c:choose>
+                                                    <c:when test="${defaultStock > 0}">
+                                                        <span class="rounded bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">Còn hàng (${defaultStock} sản phẩm)</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">Hết hàng</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">Đang cập nhật</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
                                 </div>
+
                                 <p class="text-base leading-relaxed text-text-muted font-light mb-8">
-                                    Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived. To see how things would be if you had made other choices... Would you have done anything different, if you had the chance to undo your regrets?
+                                    ${b.description}
                                 </p>
+
+                                <form action="detail" method="get">
+                                    <input type="hidden" name="pid" value="${b.bookId}"/>
+                                    <input type="hidden" name="cateid" value="${category.categoryId}"/>
+
+                                    <div class="mb-8">
+                                        <label class="block text-sm font-medium text-text-muted mb-2" for="format-select">Select Format</label>
+                                        <div class="relative">
+                                            <select class="block w-full appearance-none rounded-lg border border-gray-200 bg-white py-3 pl-4 pr-10 text-text-main text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-shadow shadow-sm hover:border-gray-300" id="format-select" name="variant" onchange="this.form.submit()">
+                                                <c:forEach var="bv" items="${b.getListVariant()}">
+                                                    <%-- Thêm data-price và data-stock vào option để JS đọc --%>
+                                                    <option 
+                                                        value="${bv.variantId}" 
+                                                        data-price="${bv.price}" 
+                                                        data-stock="${bv.stock}"
+                                                        ${bv.variantId == bookV.variantId ? 'selected' : ''}>
+                                                        ${bv.variantName} - <fmt:formatNumber type="number" value="${bv.price}"/> Đ
+                                                    </option>       
+                                                </c:forEach>
+                                            </select>
+                                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-muted">
+                                                <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <button class="flex-1 rounded-full bg-primary px-8 py-4 text-sm font-semibold text-white hover:bg-green-800 transition-all shadow-md active:scale-[0.98]">
+
+                                    <button onclick="addToCart()" class="flex-1 rounded-full bg-primary px-8 py-4 text-sm font-semibold text-white hover:bg-green-800 transition-all shadow-md active:scale-[0.98]">
                                         Add to Cart
                                     </button>
-                                    <button class="flex items-center justify-center rounded-full border border-gray-200 bg-white px-6 py-4 text-text-main hover:bg-gray-50 transition-all group">
+                                    <button type="button" class="flex items-center justify-center rounded-full border border-gray-200 bg-white px-6 py-4 text-text-main hover:bg-gray-50 transition-all group">
                                         <span class="material-symbols-outlined text-[20px] group-hover:fill-current group-hover:text-red-500 transition-colors">favorite</span>
                                     </button>
                                 </div>
-                            </div>
-                            <div class="pt-8">
-                                <div class="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-text-muted">Format</span>
-                                        <span class="font-medium text-text-main">Hardcover</span>
-                                    </div>
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-text-muted">Pages</span>
-                                        <span class="font-medium text-text-main">304</span>
-                                    </div>
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-text-muted">Publisher</span>
-                                        <span class="font-medium text-text-main">Viking</span>
-                                    </div>
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-text-muted">Language</span>
-                                        <span class="font-medium text-text-main">English</span>
-                                    </div>
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-text-muted">ISBN</span>
-                                        <span class="font-medium text-text-main">978-0525559474</span>
-                                    </div>
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-text-muted">Dimensions</span>
-                                        <span class="font-medium text-text-main">6 x 1 x 9 in</span>
-                                    </div>
-                                </div>
-                                <div class="mt-8 flex items-center gap-3 text-sm text-text-muted">
-                                    <span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
-                                    <span>Free shipping on orders over $35</span>
-                                </div>
+
                             </div>
                         </div>
                     </div>
                 </section>
+
                 <section class="border-t border-gray-100 bg-gray-50/50 py-16 lg:py-24">
                     <div class="mx-auto max-w-7xl px-6 lg:px-8">
                         <div class="mx-auto max-w-4xl">
+
                             <div class="mb-12 flex justify-center border-b border-gray-200">
                                 <nav aria-label="Tabs" class="-mb-px flex space-x-8">
-                                    <button aria-current="page" class="border-b-2 border-primary py-4 px-1 text-sm font-medium text-primary">
-                                        Description
+                                    <button aria-current="page" data-target="description-content" class="border-b-2 border-primary py-4 px-1 text-sm font-medium text-primary">
+                                        Mô tả sản phẩm
                                     </button>
-                                    <button class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-text-muted hover:border-gray-300 hover:text-text-main transition-all">
-                                        Author
+                                    <button data-target="author-content" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-text-muted hover:border-gray-300 hover:text-text-main transition-all">
+                                        Chi tiết sản phẩm
                                     </button>
-                                    <button class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-text-muted hover:border-gray-300 hover:text-text-main transition-all">
-                                        Reviews (12)
+                                    <button data-target="reviews-content" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-text-muted hover:border-gray-300 hover:text-text-main transition-all">
+                                        Đánh giá (12)
                                     </button>
                                 </nav>
                             </div>
+
                             <div class="space-y-12">
-                                <div>
-                                    <h3 class="font-serif text-2xl font-bold text-text-main mb-6">About the Book</h3>
+
+                                <div id="description-content">
+                                    <h3 class="font-serif text-2xl font-bold text-text-main mb-6">Tổng quan sản phẩm</h3>
                                     <div class="prose prose-gray max-w-none text-text-muted font-light leading-relaxed">
+
                                         <p class="mb-4">
-                                            The Midnight Library is a fantasy novel by Matt Haig, published on 13 August 2020 by Canongate Books. It was a Good Morning America Book Club selection and was shortlisted for the 2021 Women's Prize for Fiction.
+                                            ${b.description}
                                         </p>
                                         <p class="mb-4">
                                             Nora Seed finds herself in a library between life and death, where every book on the shelves provides a chance to try another life she could have lived. She can undo every decision she regrets, and try to find the perfect life. But things aren't always what she imagined they'd be, and soon her choices place the library and herself in extreme danger. Before time runs out, she must answer the ultimate question: what is the best way to live?
@@ -189,7 +238,52 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="border-t border-gray-200 pt-12">
+
+                                <div id="author-content" class=" pt-12 hidden">
+                                    <h3 class="font-serif text-2xl font-bold text-text-main mb-6">Thông số chi tiết</h3>
+                                    <div class="prose prose-gray max-w-none text-text-muted font-light leading-relaxed">
+                                        <div class="pt-8">
+                                            <div class="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Tác giả</span>
+                                                    <span class="font-medium text-text-main">${b.author}</span>
+                                                </div>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Thể loại</span>
+                                                    <span class="font-medium text-text-main">${category.categoryName}</span>
+                                                </div>
+                                                <%-- Các thông số khác (tạm để tĩnh như cũ, bạn có thể thay thế bằng dữ liệu động nếu có) --%>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Định dạng:</span>
+                                                    <span class="font-medium text-text-main">Bản cứng - Bản mềm</span>
+                                                </div>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Số trang</span>
+                                                    <span class="font-medium text-text-main">Đang cập nhật</span>
+                                                </div>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Nhà xuất bản</span>
+                                                    <span class="font-medium text-text-main">Đang cập nhật</span>
+                                                </div>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Ngôn ngữ</span>
+                                                    <span class="font-medium text-text-main">Tiếng Việt </span>
+                                                </div>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">ISBN</span>
+                                                    <span class="font-medium text-text-main">Đang cập nhật</span>
+                                                </div>
+                                                <div class="flex justify-between border-b border-gray-50 pb-2">
+                                                    <span class="text-text-muted">Kích thước</span>
+                                                    <span class="font-medium text-text-main">Đang cập nhật</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="reviews-content" class="pt-12 hidden">
                                     <div class="flex items-center justify-between mb-8">
                                         <h3 class="font-serif text-2xl font-bold text-text-main">Customer Reviews</h3>
                                         <button class="text-sm font-medium text-primary underline underline-offset-4 decoration-1">Write a Review</button>
@@ -328,6 +422,102 @@
                     </div>
                 </section>
             </main>
+<<<<<<< HEAD
             <%@include file="footer.jsp" %>
         </div>
     </body></html>
+=======
+
+            <%@include file="footer.jsp" %>
+
+        </div>
+
+        <script>
+            // Hàm định dạng tiền tệ (được sử dụng cho JavaScript)
+            const formatCurrency = (value) => {
+                // Giả định định dạng tiền tệ của bạn là VND
+                return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(value);
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const tabs = document.querySelectorAll('nav[aria-label="Tabs"] button');
+                const contentSections = document.querySelectorAll('.space-y-12 > div');
+                const formatSelect = document.getElementById('format-select');
+                const currentPriceElement = document.getElementById('current-price');
+                const stockInfoElement = document.getElementById('stock-info');
+
+                // --- LOGIC CHUYỂN TAB ---
+
+                // Ẩn tất cả nội dung trừ mô tả ban đầu
+                contentSections.forEach((section, index) => {
+                    if (index !== 0) {
+                        section.classList.add('hidden');
+                    }
+                });
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const targetId = tab.dataset.target;
+
+                        // Ẩn tất cả nội dung
+                        contentSections.forEach(section => {
+                            section.classList.add('hidden');
+                        });
+
+                        // Hiển thị nội dung tương ứng
+                        const targetContent = document.getElementById(targetId);
+                        if (targetContent) {
+                            targetContent.classList.remove('hidden');
+                        }
+
+                        // Cập nhật trạng thái active cho tab
+                        tabs.forEach(t => {
+                            t.classList.remove('border-primary', 'text-primary');
+                            t.classList.add('border-transparent', 'text-text-muted', 'hover:border-gray-300', 'hover:text-text-main');
+                            t.removeAttribute('aria-current');
+                        });
+
+                        tab.classList.add('border-primary', 'text-primary');
+                        tab.classList.remove('border-transparent', 'text-text-muted', 'hover:border-gray-300', 'hover:text-text-main');
+                        tab.setAttribute('aria-current', 'page');
+                    });
+                });
+
+
+            });
+            function addToCart() {
+                const variantSelect = document.getElementById("format-select");
+                const variantId = variantSelect.value;
+
+                fetch("cart?action=add&type=ajax&variantId=" + variantId)
+                        .then(response => response.json())
+                        .then(data => {
+                            // cập nhật số lượng giỏ hàng
+                            const cartCount = document.getElementById("cartCount");
+                            if (cartCount) {
+                                cartCount.innerText = data.total;
+                            }
+
+                            showToast();
+                        });
+            }
+
+            function showToast() {
+                const toast = document.getElementById("toast");
+
+                toast.classList.remove("hidden");
+                toast.classList.remove("opacity-0");
+
+                setTimeout(() => {
+                    toast.classList.add("opacity-0");
+
+                    setTimeout(() => {
+                        toast.classList.add("hidden");
+                    }, 500);
+                }, 5000);
+            }
+
+        </script>
+    </body>
+</html>
+>>>>>>> 9c14067273111fb9d9da9a5366cb7911c317a57b

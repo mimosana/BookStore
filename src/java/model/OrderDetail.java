@@ -8,7 +8,16 @@ public class OrderDetail {
     private String bookTitle;
     private String variantName;
 
+    // extra for JOIN
+    private BookVariant varaint;
     public OrderDetail() {}
+     public OrderDetail(int orderId, int variantId, int quantity, double price) {
+        this.orderId = orderId;
+        this.variantId = variantId;
+        this.quantity = quantity;
+        this.price = price;
+        
+    }
 
     public int getOrderId() { return orderId; }
     public void setOrderId(int orderId) { this.orderId = orderId; }
@@ -27,4 +36,25 @@ public class OrderDetail {
 
     public String getVariantName() { return variantName; }
     public void setVariantName(String variantName) { this.variantName = variantName; }
+    
+
+   
+
+    public BookVariant getVaraint() {
+        return varaint;
+    }
+
+    public void setVaraint(BookVariant varaint) {
+        this.varaint = varaint;
+    }
+    
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" + "orderId=" + orderId + ", variantId=" + variantId + ", quantity=" + quantity + ", price=" + price + ", varaint=" + varaint + '}';
+    }
+    
+    
+
 }
+

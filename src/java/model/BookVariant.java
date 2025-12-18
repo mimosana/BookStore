@@ -7,21 +7,41 @@ public class BookVariant {
     private double price;
     private int stock;
     private String status;
-
+    
+    private Book book;
     public BookVariant() {}
 
     public BookVariant(int variantId, int bookId, String variantName,
                        double price, int stock, String status) {
-        this.variantId = variantId;
+                        this.variantId = variantId;
         this.bookId = bookId;
         this.variantName = variantName;
         this.price = price;
         this.stock = stock;
         this.status = status;
+                       }
+   
+
+    public BookVariant(int variantId, int bookId, String variantName, double price, int stock) {
+        this.variantId = variantId;
+        this.bookId = bookId;
+        this.variantName = variantName;
+        this.price = price;
+        this.stock = stock;
     }
 
     // getters & setters
 
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    
     public int getVariantId() {
         return variantId;
     }
@@ -69,4 +89,11 @@ public class BookVariant {
     public void setStatus(String status) {
         this.status = status;
     }
+    @Override
+    public String toString() {
+        return "BookVariant{" + "variantId=" + variantId + ", bookId=" + bookId + ", variantName=" + variantName + ", price=" + price + ", stock=" + stock + '}';
+    }
+    
+    
+    
 }

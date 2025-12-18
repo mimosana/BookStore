@@ -15,7 +15,7 @@
             <file>file:/D:/PRJ301/Bookstore/BookStore2/src/java/controller/AdminDashboardServlet.java</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/web/admin/categoryManagement.jsp</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/web/admin/variant-form.jsp</file>
-            <file>file:/D:/PRJ301/Bookstore/BookStore2/web/admin/productManagement.jsp</file>
+            <file>file:/D:/PRJ30s1/Bookstore/BookStore2/web/admin/productManagement.jsp</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/src/java/controller/BookVariantServlet.java</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/web/admin/order-management.jsp</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/src/java/dao/BookDAO.java</file>
@@ -26,6 +26,11 @@
             <file>file:/D:/PRJ301/Bookstore/BookStore2/web/dashboard.jsp</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/web/menu.jsp</file>
             <file>file:/D:/PRJ301/Bookstore/BookStore2/src/java/controller/LogoutServlet.java</file>
+            <file>file:/D:/Spring2026/PRJ301/BookStore/src/java/dao/CartDAO.java</file>
+            <file>file:/D:/Spring2026/PRJ301/BookStore/src/java/dao/OrderDAO.java</file>
+            <file>file:/D:/Spring2026/PRJ301/BookStore/src/java/controller/CheckoutServlet.java</file>
+            <file>file:/D:/Spring2026/PRJ301/BookStore/web/checkout.jsp</file>
+            <file>file:/D:/Spring2026/PRJ301/BookStore/src/java/controller/showCart.java</file>
         </group>
     </open-files>
 </project-private>

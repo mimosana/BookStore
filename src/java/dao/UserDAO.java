@@ -1,13 +1,15 @@
 package dao;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.User;
 
 public class UserDAO extends DBContext {
 
+     public UserDAO() {
+        super(); // kết nối DB
+    }
     // ================== LOGIN ==================
     public User login(String username, String password) {
         if (conn == null) {

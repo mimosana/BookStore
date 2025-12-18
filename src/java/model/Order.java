@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private int orderId;
@@ -13,8 +14,20 @@ public class Order {
     private String shippingAddress;
     private String city;
 
+    private List<Book> book;
     public Order() {}
 
+    public Order(int orderId, int userId, Date orderDate, String status, double total, String receiverName, String phone, String shippingAddress, String city) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.total = total;
+        this.receiverName = receiverName;
+        this.phone = phone;
+        this.shippingAddress = shippingAddress;
+        this.city = city;
+    }
     // Getter & Setter
     public int getOrderId() { return orderId; }
     public void setOrderId(int orderId) { this.orderId = orderId; }
@@ -42,4 +55,26 @@ public class Order {
 
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }
+    
+
+    
+
+    public List<Book> getBook() {
+        return book;
+    }
+
+    public void setBook(List<Book> book) {
+        this.book = book;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" + "orderId=" + orderId + ", userId=" + userId + ", orderDate=" + orderDate + ", status=" + status + ", total=" + total + ", receiverName=" + receiverName + ", phone=" + phone + ", shippingAddress=" + shippingAddress + ", city=" + city + ", book=" + book + '}';
+    }
+
+    
+    
+
+    
+    
 }

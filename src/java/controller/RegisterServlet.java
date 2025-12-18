@@ -28,7 +28,7 @@ public class RegisterServlet extends HttpServlet {
         String fullName = request.getParameter("fullname");
         String email = request.getParameter("email");
 
-        // Validate
+        // Validate chung
         if (!ValidateUtils.isValidUsername(username)) {
             request.setAttribute("error", "Username không hợp lệ (3–20 ký tự)");
         } else if (!ValidateUtils.isValidPassword(password)) {
@@ -53,7 +53,7 @@ public class RegisterServlet extends HttpServlet {
             // Check trùng username
             if (dao.checkUsernameExist(username)) {
                 request.setAttribute("error", "Username đã tồn tại");
-                request.getRequestDispatcher("/register.jsp").forward(request, response);
+                request.getRequestDispatcher("register.jsp").forward(request, response);
                 return;
             }
 
@@ -76,7 +76,7 @@ public class RegisterServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi hệ thống");
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 }

@@ -1,7 +1,7 @@
 package controller;
 
 import dao.BookDAO;
-import dao.BookVariantDAO;
+import dao.BookVariantDao;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import model.BookVariant;
 
 public class BookVariantServlet extends HttpServlet {
 
-    private final BookVariantDAO variantDAO = new BookVariantDAO();
+    private final BookVariantDao variantDAO = new BookVariantDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

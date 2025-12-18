@@ -4,14 +4,13 @@ import dao.CategoryDAO;
 import model.Category;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/admin/categories")
+//@WebServlet("/admin/categories")
 public class CategoryManagementServlet extends HttpServlet {
 
     private CategoryDAO dao;
