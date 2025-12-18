@@ -1,0 +1,16 @@
+# Chặn tất cả file .class ở bất kỳ đâu
+*.class
+
+# Chặn thư mục build (nơi chứa file dịch ngược bạn thấy lúc nãy)
+build/
+target/
+bin/
+out/
+
+# Chặn các file cấu hình của IDE (NetBeans, Eclipse, IntelliJ)
+nbproject/private/
+.settings/
+.classpath
+.project
+.idea/
+*.iml
