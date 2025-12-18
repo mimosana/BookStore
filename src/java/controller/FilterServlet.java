@@ -74,18 +74,18 @@ public class FilterServlet extends HttpServlet {
         }
 
         int cateid = 0;
+        Category category=null;
         boolean isParse = false;
         try {
             if (categoryid != null && !categoryid.trim().isEmpty()) {
                 cateid = Integer.parseInt(categoryid);
+                category=categoryDAO.getCategory(cateid);
             }
         } catch (NumberFormatException e) {
             cateid = 0;
             request.setAttribute("messageCateID", "Không tìm thấy sản phẩm nào");
         }
-        System.out.println("categoryid: " + categoryid == null);
-        System.out.println("isParse: " + isParse);
-        Category category=categoryDAO.getCategory(cateid);
+        
         listB = productDAO.filterProduct(keyword, variant, minPrice, maxPrice, cateid);
 
         //phân trang

@@ -11,6 +11,7 @@ package model;
 public class Category {
     private int categoryId;
     private String categoryName;
+    private String status;
 
     public Category() {}
 
@@ -18,6 +19,14 @@ public class Category {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
+
+    public Category(int categoryId, String categoryName, String status) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.status = status;
+    }
+    
+    
 
     public int getCategoryId() {
         return categoryId;
@@ -35,10 +44,20 @@ public class Category {
         this.categoryName = categoryName;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
-        return "Category{" + "categoryId=" + categoryId + ", categoryName=" + categoryName + '}';
+        return "Category{" + "categoryId=" + categoryId + ", categoryName=" + categoryName + ", status=" + status + '}';
     }
+    
+   
     
     
     

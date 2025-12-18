@@ -156,10 +156,12 @@
                                         <img alt="${b.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${b.image}"/>
                                         
                                         <div class="absolute bottom-0 inset-x-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                            
                                             <button class="w-full bg-primary hover:bg-green-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
                                                 <span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
                                                 Add to Cart
                                             </button>
+                                                
                                         </div>
                                     </a>
 
@@ -213,4 +215,5 @@
         </div>
     </main>
     <%@include file="footer.jsp" %>
+    
 </body></html>

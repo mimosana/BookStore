@@ -4,6 +4,7 @@
  */
 package model;
 
+import dao.BookVariantDao;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,63 +13,77 @@ import java.util.List;
  * @author Admin
  */
 public class Cart {
-    List<CartItem> items;
-
-    public Cart() {
+    private int userId;
+    private List<CartItem> items;
+    private BookVariantDao variantDao = new BookVariantDao();
+    
+    public Cart(){
         items=new ArrayList<>();
     }
+
     
-    public List<CartItem> getAll(){
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public List<CartItem> getItems() {
         return items;
     }
-    
-    public BookVariant getProductByIndex(int pid,List<BookVariant> list){
-        for(BookVariant b:list){
-            if(b.getBookId()==pid){
-                return b;
-            }
-        }
-        return null;
+
+    public void setItems(List<CartItem> items) {
+        this.items = items;
     }
-    public CartItem getItem(int pid){
+    
+    
+    public CartItem getBookInList(int variantId){
         for(CartItem i:items){
-            if(i.getVariant().getVariantId()==pid){
+            if(i.getVariant().getVariantId()==variantId)
                 return i;
-            }
         }
         return null;
     }
-    //add Items
-    public void addItems(CartItem item){
-            if(getItem(item.getVariant().getVariantId())!=null){
-                CartItem i=getItem(item.getVariant().getVariantId());
-                i.setQuantity(i.getQuantity()+item.getQuantity());
-            }else{
-                items.add(item);
-            }
-        
-        
+    public boolean deleteItem(int variantId){
+        return items.remove(getBookInList(variantId));
     }
     
-    //
-    public Cart(String txt,List<BookVariant> listB){
-        items=new ArrayList<>();
-        String[] listItem=txt.split("\\|");
-        for(String i:listItem){
-            String[] listStrings=i.split(":");
-            String pid=listStrings[0];
-            String quantity=listStrings[1];
-            
-            try {
-                int id=Integer.parseInt(pid);
-                int quantityP=Integer.parseInt(quantity);
-                BookVariant book=getProductByIndex(id, listB);
-                CartItem item=new CartItem(book, quantityP, book.getPrice());
-                addItems(item);
-            } catch (Exception e) {
-            }
-            
-        }
-        
+    public int getQuantityOfItem(int variantid){
+        return getBookInList(variantid).getQuantity();
     }
+            
+    public void addItemToLocalList(int variantId,int quatity){
+        CartItem item=getBookInList(variantId);
+        
+        if(item!=null){
+            int newquantity=quatity+item.getQuantity();
+            if(newquantity<=variantDao.getQuantity(variantId))
+              item.setQuantity(newquantity);
+        }else{
+            BookVariant variant=variantDao.getVariant(variantId);
+            if(variant!=null){
+                if(quatity<=variant.getStock()){
+                CartItem cartItem=new CartItem();
+                cartItem.setUserid(getUserId());
+                cartItem.setVariant(variant);
+                cartItem.setQuantity(quatity);
+                this.items.add(item);
+                }
+            }
+        }
+    }
+    public int getSizeOfList(){
+        return items.size();
+    }
+    public double getTotalQuantity(){
+        double sum=0;
+        for(CartItem i:items){
+            sum+=(i.getQuantity()*i.getVariant().getPrice());
+        }
+        return sum;
+    }
+    
+    
 }

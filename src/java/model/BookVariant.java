@@ -14,6 +14,8 @@ public class BookVariant {
     private String variantName;
     private double price;
     private int stock;
+    
+    private Book book;
 
     public BookVariant() {}
 
@@ -27,6 +29,15 @@ public class BookVariant {
         this.stock = stock;
     }
 
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    
     public int getVariantId() {
         return variantId;
     }

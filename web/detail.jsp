@@ -55,24 +55,29 @@
         </style>
     </head>
     <body class="bg-background font-sans text-text-main antialiased selection:bg-green-100">
+
         <div class="flex min-h-screen w-full flex-col">
 
             <%@include file="menu.jsp" %>
+            <div id="toast"
+                 class="fixed top-6 right-6 z-50 hidden rounded-lg bg-green-600 px-5 py-3 text-white shadow-lg transition-opacity duration-500">
+                ✅ Đã thêm vào giỏ hàng
+            </div>
             <c:set var="b" value="${book}"/>
             <main class="flex-1 bg-white">
                 <nav aria-label="Breadcrumb" class="mx-auto max-w-7xl px-6 pt-8 lg:px-8">
                     <ol class="flex items-center space-x-2 text-sm text-text-muted">
                         <li>
-                            <a class="hover:text-text-main transition-colors" href="home">Home</a>
+                            <a class="hover:text-text-main transition-colors" href="home">Trang chủ</a>
                         </li>
                         <li><span class="text-gray-300">/</span></li>
                         <li>
-                            <a class="hover:text-text-main transition-colors" href="filter">Shop</a>
+                            <a class="hover:text-text-main transition-colors" href="filter">Mau sắm</a>
                         </li>
                         <li><span class="text-gray-300">/</span></li>
                         <li>
                             <%-- Sử dụng thông tin category từ đối tượng book hoặc biến category nếu có --%>
-                            <a class="hover:text-text-main transition-colors" href="filter?category=${category.categoryId}">${category.categoryName}</a>
+                            <a class="hover:text-text-main transition-colors" href="filter?category=${category.categoryId}">${empty category.categoryName?'Tất cả':category.categoryName}</a>
                         </li>
                         <li><span class="text-gray-300">/</span></li>
                         <li>
@@ -173,7 +178,7 @@
                                                         data-price="${bv.price}" 
                                                         data-stock="${bv.stock}"
                                                         ${bv.variantId == bookV.variantId ? 'selected' : ''}>
-                                                        ${bv.variantName} - <fmt:formatNumber type="currency" value="${bv.price}"/>
+                                                        ${bv.variantName} - <fmt:formatNumber type="number" value="${bv.price}"/> Đ
                                                     </option>       
                                                 </c:forEach>
                                             </select>
@@ -184,7 +189,8 @@
                                     </div>
                                 </form>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <button class="flex-1 rounded-full bg-primary px-8 py-4 text-sm font-semibold text-white hover:bg-green-800 transition-all shadow-md active:scale-[0.98]">
+
+                                    <button onclick="addToCart()" class="flex-1 rounded-full bg-primary px-8 py-4 text-sm font-semibold text-white hover:bg-green-800 transition-all shadow-md active:scale-[0.98]">
                                         Add to Cart
                                     </button>
                                     <button type="button" class="flex items-center justify-center rounded-full border border-gray-200 bg-white px-6 py-4 text-text-main hover:bg-gray-50 transition-all group">
@@ -220,7 +226,7 @@
                                 <div id="description-content">
                                     <h3 class="font-serif text-2xl font-bold text-text-main mb-6">Tổng quan sản phẩm</h3>
                                     <div class="prose prose-gray max-w-none text-text-muted font-light leading-relaxed">
-                                        
+
                                         <p class="mb-4">
                                             ${b.description}
                                         </p>
@@ -272,7 +278,7 @@
                                                     <span class="font-medium text-text-main">Đang cập nhật</span>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -475,6 +481,38 @@
 
 
             });
+            function addToCart() {
+                const variantSelect = document.getElementById("format-select");
+                const variantId = variantSelect.value;
+
+                fetch("cart?action=add&type=ajax&variantId=" + variantId)
+                        .then(response => response.json())
+                        .then(data => {
+                            // cập nhật số lượng giỏ hàng
+                            const cartCount = document.getElementById("cartCount");
+                            if (cartCount) {
+                                cartCount.innerText = data.total;
+                            }
+
+                            showToast();
+                        });
+            }
+
+            function showToast() {
+                const toast = document.getElementById("toast");
+
+                toast.classList.remove("hidden");
+                toast.classList.remove("opacity-0");
+
+                setTimeout(() => {
+                    toast.classList.add("opacity-0");
+
+                    setTimeout(() => {
+                        toast.classList.add("hidden");
+                    }, 500);
+                }, 5000);
+            }
+
         </script>
     </body>
 </html>

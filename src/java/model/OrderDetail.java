@@ -15,21 +15,30 @@ public class OrderDetail {
     private double price;
 
     // extra for JOIN
-    private String bookTitle;
-    private String variantName;
+    private BookVariant varaint;
+    
 
     public OrderDetail() {}
 
     
 
-    public OrderDetail(int orderId, int variantId, int quantity, double price, String bookTitle, String variantName) {
+    public OrderDetail(int orderId, int variantId, int quantity, double price) {
         this.orderId = orderId;
         this.variantId = variantId;
         this.quantity = quantity;
         this.price = price;
-        this.bookTitle = bookTitle;
-        this.variantName = variantName;
+        
     }
+
+    public BookVariant getVaraint() {
+        return varaint;
+    }
+
+    public void setVaraint(BookVariant varaint) {
+        this.varaint = varaint;
+    }
+    
+    
 
     public int getOrderId() {
         return orderId;
@@ -63,21 +72,12 @@ public class OrderDetail {
         this.price = price;
     }
 
-    public String getBookTitle() {
-        return bookTitle;
-    }
-
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
-    }
-
-    public String getVariantName() {
-        return variantName;
-    }
-
-    public void setVariantName(String variantName) {
-        this.variantName = variantName;
+    @Override
+    public String toString() {
+        return "OrderDetail{" + "orderId=" + orderId + ", variantId=" + variantId + ", quantity=" + quantity + ", price=" + price + ", varaint=" + varaint + '}';
     }
     
+    
+
 }
 

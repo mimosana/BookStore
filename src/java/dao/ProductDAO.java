@@ -27,184 +27,214 @@ public class ProductDAO extends DBContext {
     }
 
     public List<Book> getAll() {
-    List<Book> list = new ArrayList<>();
-    String sql = """
+        List<Book> list = new ArrayList<>();
+        String sql = """
         SELECT *
         FROM Books B
         JOIN BookVariants BV ON B.book_id = BV.book_id
         ORDER BY B.book_id
     """;
 
-    try (PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-        Map<Integer, Book> map = new LinkedHashMap<>();
+            Map<Integer, Book> map = new LinkedHashMap<>();
 
-        while (rs.next()) {
-            int bookId = rs.getInt("book_id");
+            while (rs.next()) {
+                int bookId = rs.getInt("book_id");
 
-            Book book = map.get(bookId);
-            if (book == null) {
-                book = new Book();
-                book.setBookId(bookId);
-                book.setTitle(rs.getString("title"));
-                book.setAuthor(rs.getString("author"));
-                book.setDescription(rs.getString("description"));
-                book.setImage(rs.getString("image"));
-                book.setCategoryId(rs.getInt("category_id"));
-                book.setListVariant(new ArrayList<>());
+                Book book = map.get(bookId);
+                if (book == null) {
+                    book = new Book();
+                    book.setBookId(bookId);
+                    book.setTitle(rs.getString("title"));
+                    book.setAuthor(rs.getString("author"));
+                    book.setDescription(rs.getString("description"));
+                    book.setImage(rs.getString("image"));
+                    book.setCategoryId(rs.getInt("category_id"));
+                    book.setListVariant(new ArrayList<>());
 
-                map.put(bookId, book);
+                    map.put(bookId, book);
+                }
+
+                BookVariant variant = new BookVariant();
+                variant.setVariantId(rs.getInt("variant_id"));
+                variant.setBookId(bookId);
+                variant.setVariantName(rs.getString("variant_name"));
+                variant.setPrice(rs.getDouble("price"));
+                variant.setStock(rs.getInt("stock"));
+
+                book.getListVariant().add(variant);
             }
 
-            BookVariant variant = new BookVariant();
-            variant.setVariantId(rs.getInt("variant_id"));
-            variant.setBookId(bookId);
-            variant.setVariantName(rs.getString("variant_name"));
-            variant.setPrice(rs.getDouble("price"));
-            variant.setStock(rs.getInt("stock"));
+            list.addAll(map.values());
+            return list;
 
-            book.getListVariant().add(variant);
+        } catch (SQLException e) {
+            errcode = -2;
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
-        list.addAll(map.values());
         return list;
-
-    } catch (SQLException e) {
-        errcode = -2;
-        Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
     }
 
-    return list;
-}
-    public List<Book> filterProduct(String keyword,String variantName,double min,double max,int cateid) {
-    List<Book> list = new ArrayList<>();
-    String sql = "select B.*,BV.variant_name,BV.price,BV.stock,BV.variant_id "
-            + "from Books B join BookVariants BV on B.book_id=BV.book_id "
-            + "where 1=1";
-     List<Object> param=new ArrayList<>();
-    if(keyword!=null&&!keyword.isEmpty()){
-        sql+=" and (B.title like ? or B.author like ?)";
-        param.add("%"+keyword.trim()+"%");
-        param.add("%"+keyword.trim()+"%");
-    }
-    if(variantName!=null&&!variantName.isEmpty()){
-        sql+=" and BV.variant_name like ?";
-        param.add("%"+variantName+"%");
-        
-    }
-    if(cateid>0){
-        sql+=" and B.category_id =?";
-        param.add(cateid);
-        
-    }
-    if(min>0){
-        sql+=" and BV.price>=?";
-        param.add(min);      
-    }
-    if(max>0){
-        sql+=" and BV.price<=?";
-        param.add(max);
-    }
-    sql += " ORDER BY B.book_id";
-
-    try {
-        PreparedStatement ps = conn.prepareStatement(sql);
-        for (int i = 0; i < param.size(); i++) {
-            ps.setObject(i + 1, param.get(i));
+    public List<Book> filterProduct(String keyword, String variantName, double min, double max, int cateid) {
+        List<Book> list = new ArrayList<>();
+        String sql = "select B.*,BV.variant_name,BV.price,BV.stock,BV.variant_id "
+                + "from Books B join BookVariants BV on B.book_id=BV.book_id "
+                + "where 1=1";
+        List<Object> param = new ArrayList<>();
+        if (keyword != null && !keyword.isEmpty()) {
+            sql += " and (B.title like ? or B.author like ?)";
+            param.add("%" + keyword.trim() + "%");
+            param.add("%" + keyword.trim() + "%");
         }
-        ResultSet rs = ps.executeQuery();
-        Book currentBook = null;
-        int lastBookId = -1;
+        if (variantName != null && !variantName.isEmpty()) {
+            sql += " and BV.variant_name like ?";
+            param.add("%" + variantName + "%");
 
-        while (rs.next()) {
-            int bookId = rs.getInt("book_id");
+        }
+        if (cateid > 0) {
+            sql += " and B.category_id =?";
+            param.add(cateid);
 
-            if (bookId != lastBookId) {
-                currentBook = new Book();
-                currentBook.setBookId(bookId);
-                currentBook.setTitle(rs.getString("title"));
-                currentBook.setAuthor(rs.getString("author"));
-                currentBook.setDescription(rs.getString("description"));
-                currentBook.setImage(rs.getString("image"));
-                currentBook.setCategoryId(rs.getInt("category_id"));
-                currentBook.setListVariant(new ArrayList<>());
+        }
+        if (min > 0) {
+            sql += " and BV.price>=?";
+            param.add(min);
+        }
+        if (max > 0) {
+            sql += " and BV.price<=?";
+            param.add(max);
+        }
+        sql += " ORDER BY B.book_id";
 
-                list.add(currentBook);
-                lastBookId = bookId;
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            for (int i = 0; i < param.size(); i++) {
+                ps.setObject(i + 1, param.get(i));
             }
+            ResultSet rs = ps.executeQuery();
+            Book currentBook = null;
+            int lastBookId = -1;
 
-            BookVariant v = new BookVariant();
-            v.setVariantId(rs.getInt("variant_id"));
-            v.setBookId(bookId);
-            v.setVariantName(rs.getString("variant_name"));
-            v.setPrice(rs.getDouble("price"));
-            v.setStock(rs.getInt("stock"));
+            while (rs.next()) {
+                int bookId = rs.getInt("book_id");
 
-            currentBook.getListVariant().add(v);
+                if (bookId != lastBookId) {
+                    currentBook = new Book();
+                    currentBook.setBookId(bookId);
+                    currentBook.setTitle(rs.getString("title"));
+                    currentBook.setAuthor(rs.getString("author"));
+                    currentBook.setDescription(rs.getString("description"));
+                    currentBook.setImage(rs.getString("image"));
+                    currentBook.setCategoryId(rs.getInt("category_id"));
+                    currentBook.setListVariant(new ArrayList<>());
+
+                    list.add(currentBook);
+                    lastBookId = bookId;
+                }
+
+                BookVariant v = new BookVariant();
+                v.setVariantId(rs.getInt("variant_id"));
+                v.setBookId(bookId);
+                v.setVariantName(rs.getString("variant_name"));
+                v.setPrice(rs.getDouble("price"));
+                v.setStock(rs.getInt("stock"));
+
+                currentBook.getListVariant().add(v);
+            }
+        } catch (SQLException e) {
+            errcode = -2;
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
         }
-    }catch (SQLException e) {
-        errcode = -2;
-        Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+
+        return list;
     }
 
-    return list;
-}
     //Lấy book theo phân trang
-    public List<Book> getBookByPaging(int start,List<Book> list,int end){
-        List<Book> listB=new ArrayList<>();
-        for(int i=start;i<end;i++){
+    public List<Book> getBookByPaging(int start, List<Book> list, int end) {
+        List<Book> listB = new ArrayList<>();
+        for (int i = start; i < end; i++) {
             listB.add(list.get(i));
         }
         return listB;
     }
-    
+
     //Get detail of product
-public Book getBook(int id) {
-    Book book=null;
-    String sql ="SELECT B.*,BV.variant_name,BV.price,BV.stock,BV.variant_id \n" +
-"        FROM Books B\n" +
-"        JOIN BookVariants BV ON B.book_id = BV.book_id\n" +
-"        where B.book_id = ?";
+    public Book getBook(int id) {
+        Book book = null;
+        String sql = "SELECT B.*,BV.variant_name,BV.price,BV.stock,BV.variant_id \n"
+                + "        FROM Books B\n"
+                + "        JOIN BookVariants BV ON B.book_id = BV.book_id\n"
+                + "        where B.book_id = ?";
 
-    try {
+        try {
 
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, id);
-         ResultSet rs = ps.executeQuery();
-        
-        while (rs.next()) {
-            if (book ==null) {
-                book=new Book();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                if (book == null) {
+                    book = new Book();
+                    book.setBookId(rs.getInt("book_id"));
+                    book.setTitle(rs.getString("title"));
+                    book.setAuthor(rs.getString("author"));
+                    book.setDescription(rs.getString("description"));
+                    book.setImage(rs.getString("image"));
+                    book.setCategoryId(rs.getInt("category_id"));
+                    book.setListVariant(new ArrayList<>());
+                }
+
+                BookVariant variant = new BookVariant();
+                variant.setVariantId(rs.getInt("variant_id"));
+                variant.setBookId(rs.getInt("book_id"));
+                variant.setVariantName(rs.getString("variant_name"));
+                variant.setPrice(rs.getDouble("price"));
+                variant.setStock(rs.getInt("stock"));
+
+                book.getListVariant().add(variant);
+            }
+
+        } catch (SQLException e) {
+            errcode = -2;
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return book;
+    }
+
+    public Book getBookById(int bookid) {
+        String sql = "Select * from Book"
+                + "where book_id=?";
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, bookid);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                Book book = new Book();
                 book.setBookId(rs.getInt("book_id"));
                 book.setTitle(rs.getString("title"));
                 book.setAuthor(rs.getString("author"));
                 book.setDescription(rs.getString("description"));
                 book.setImage(rs.getString("image"));
                 book.setCategoryId(rs.getInt("category_id"));
-                book.setListVariant(new ArrayList<>());
+                return book;
+
             }
 
-            BookVariant variant = new BookVariant();
-            variant.setVariantId(rs.getInt("variant_id"));
-            variant.setBookId(rs.getInt("book_id"));
-            variant.setVariantName(rs.getString("variant_name"));
-            variant.setPrice(rs.getDouble("price"));
-            variant.setStock(rs.getInt("stock"));
-
-            book.getListVariant().add(variant);
+        } catch (SQLException e) {
+            errcode = -2;
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
         }
-
-    } catch (SQLException e) {
-        errcode = -2;
-        Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, e);
+        return null;
     }
 
-    return book;
-}
-
     public static void main(String[] args) {
-        ProductDAO productDAO=new ProductDAO();
+        ProductDAO productDAO = new ProductDAO();
         Book book = productDAO.getBook(2);
         System.out.println(book);
     }

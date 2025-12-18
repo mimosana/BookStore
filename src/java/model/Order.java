@@ -9,6 +9,7 @@ package model;
  * @author luong
  */
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private int orderId;
@@ -21,7 +22,8 @@ public class Order {
     private String phone;
     private String shippingAddress;
     private String city;
-
+    
+    private List<Book> book;
     public Order() {}
 
     public Order(int orderId, int userId, Date orderDate, String status, double total, String receiverName, String phone, String shippingAddress, String city) {
@@ -35,6 +37,18 @@ public class Order {
         this.shippingAddress = shippingAddress;
         this.city = city;
     }
+
+    public List<Book> getBook() {
+        return book;
+    }
+
+    public void setBook(List<Book> book) {
+        this.book = book;
+    }
+
+    
+
+    
 
     public int getOrderId() {
         return orderId;
@@ -108,5 +122,14 @@ public class Order {
         this.city = city;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" + "orderId=" + orderId + ", userId=" + userId + ", orderDate=" + orderDate + ", status=" + status + ", total=" + total + ", receiverName=" + receiverName + ", phone=" + phone + ", shippingAddress=" + shippingAddress + ", city=" + city + ", book=" + book + '}';
+    }
+
+    
+    
+
+    
     
 }

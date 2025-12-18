@@ -50,7 +50,7 @@
         </style>
     </head>
     <body class="bg-surface-light dark:bg-background-dark text-text-main font-display antialiased min-h-screen flex flex-col">
-        
+
         <main class="flex-grow flex items-center justify-center p-6">
             <div class="w-full max-w-[480px] bg-background-light dark:bg-surface-dark border border-[#eaf3e7] dark:border-[#2a3c25] rounded-3xl p-8 md:p-10 shadow-xl shadow-[#eaf3e7]/60 dark:shadow-none">
                 <div class="text-center mb-8">
@@ -91,6 +91,11 @@
                         </button>
                     </div>
                 </form>
+                <div>
+                    <p class="col-span-2 text-red-500 font-semibold">
+                        ${error}
+                    </p>
+                </div>
                 <div class="mt-8 pt-6 border-t border-[#eaf3e7] dark:border-[#2a3c25] text-center">
                     <p class="text-text-secondary text-sm font-medium">
                         Don't have an account? 

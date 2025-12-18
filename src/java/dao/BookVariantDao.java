@@ -55,9 +55,9 @@ public class BookVariantDao extends DBContext {
 
             while (rs.next()) {
                 BookVariant variants = new BookVariant();
-                variants.setVariantId(rs.getInt("variantId"));
-                variants.setBookId(rs.getInt("bookId"));
-                variants.setVariantName(rs.getString("variantName"));
+                variants.setVariantId(rs.getInt("variant_id"));
+                variants.setBookId(rs.getInt("book_id"));
+                variants.setVariantName(rs.getString("variant_name"));
                 variants.setPrice(rs.getFloat("price"));
                 variants.setStock(rs.getInt("stock"));
                 list.add(variants);
@@ -86,9 +86,68 @@ public class BookVariantDao extends DBContext {
         }
         return -1;//không có quantity trong kho
     }
+    public boolean isVariant(int variantid){
+        String sql = "select * from BookVariants where variant_id=?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, variantid);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                 return true;
+            }
+        } catch (SQLException e) {
+            errcode = -2;
+             Logger.getLogger(BookVariantDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+    public BookVariant getVariant(int variantid){
+        String sql = "select * from BookVariants where variant_id=?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, variantid);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                 BookVariant variants = new BookVariant();
+                variants.setVariantId(rs.getInt("variant_id"));
+                variants.setBookId(rs.getInt("book_id"));
+                variants.setVariantName(rs.getString("variant_name"));
+                variants.setPrice(rs.getFloat("price"));
+                variants.setStock(rs.getInt("stock"));
+                return variants;
+            }
+        } catch (SQLException e) {
+            errcode = -2;
+             Logger.getLogger(BookVariantDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+    public boolean updateQuantity(int variantId,int quantity){
+        String sql="Update from BookVariants"
+                + "set quantity=?"
+                + "where variant_id=?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, quantity);
+            ps.setInt(2, variantId);
+            int n = ps.executeUpdate();
+            return n>0;
+            
+        } catch (SQLException e) {
+            errcode = -2;
+             Logger.getLogger(BookVariantDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
     
     public static void main(String[] args) {
         BookVariantDao variantDao=new BookVariantDao();
+        BookVariant variant2=variantDao.getVariant(6);
+        System.out.println(variant2);
         ArrayList<BookVariant> list=variantDao.getVariantName();
         for(BookVariant b:list){
             System.out.println(b);

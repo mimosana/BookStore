@@ -19,16 +19,11 @@ public class User {
     private String role;
     private Date createdAt;
 
-    private String receiverName;
-    private String phone;
-    private String addressDetail;
-    private String city;
-
     public User() {}
 
     
 
-    public User(int userId, String username, String password, String fullName, String email, String role, Date createdAt, String receiverName, String phone, String addressDetail, String city) {
+    public User(int userId, String username, String password, String fullName, String email, String role, Date createdAt) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -36,10 +31,7 @@ public class User {
         this.email = email;
         this.role = role;
         this.createdAt = createdAt;
-        this.receiverName = receiverName;
-        this.phone = phone;
-        this.addressDetail = addressDetail;
-        this.city = city;
+        
     }
 
     public int getUserId() {
@@ -98,38 +90,7 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public String getReceiverName() {
-        return receiverName;
-    }
 
-    public void setReceiverName(String receiverName) {
-        this.receiverName = receiverName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddressDetail() {
-        return addressDetail;
-    }
-
-    public void setAddressDetail(String addressDetail) {
-        this.addressDetail = addressDetail;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-    
     
    
 }

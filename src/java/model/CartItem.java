@@ -9,16 +9,25 @@ package model;
  * @author luong
  */
 public class CartItem {
+    private int userid;
     private BookVariant variant;
     private int quantity;
-    private double price;
 
-    public CartItem() {}
+    public CartItem() {
+    }
 
-    public CartItem(BookVariant variant, int quantity, double price) {
+    public CartItem(int userid, BookVariant variant, int quantity) {
+        this.userid = userid;
         this.variant = variant;
         this.quantity = quantity;
-        this.price = price;
+    }
+
+    public int getUserid() {
+        return userid;
+    }
+
+    public void setUserid(int userid) {
+        this.userid = userid;
     }
 
     public BookVariant getVariant() {
@@ -37,14 +46,13 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public double getPrice() {
-        return price;
+    @Override
+    public String toString() {
+        return "CartItem{" + "userid=" + userid + ", variant=" + variant + ", quantity=" + quantity + '}';
     }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     
+    
+    
+       
     
 }
