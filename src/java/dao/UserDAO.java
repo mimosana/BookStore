@@ -501,5 +501,56 @@ public class UserDAO extends DBContext {
     }
     return false;
 }
+    public List<User> getAllUser() {
+    List<User> list = new ArrayList<>();
+    if (conn == null) return list;
+
+    String sql = "SELECT * FROM Users ORDER BY user_id DESC";
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            User u = new User();
+            u.setUserId(rs.getInt("user_id"));
+            u.setUsername(rs.getString("username"));
+            u.setPassword(rs.getString("password")); // ✅ Thêm dòng này
+            u.setFullName(rs.getString("full_name"));
+            u.setEmail(rs.getString("email"));
+            u.setRole(rs.getString("role"));
+            u.setStatus(rs.getString("status"));
+            u.setCreatedAt(rs.getDate("created_at"));
+            list.add(u);
+        }
+        rs.close();
+        ps.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+     public User getByUsername(String username) {
+        String sql = "SELECT user_id, username, password, role FROM Users WHERE username = ?";
+        try (
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
+                return user;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // không tìm thấy
+    }
 
 }

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import utils.ValidateUtils;
+import utils.PasswordUtil;
 
 public class ChangePasswordServlet extends HttpServlet {
 
@@ -69,7 +70,10 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         // Update password
-        boolean success = userDAO.updatePassword(userId, password);
+        // Hash password trước khi update
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        boolean success = userDAO.updatePassword(userId, hashedPassword);
+
         if (success) {
             response.sendRedirect(request.getContextPath() + "/admin/customers?success=changepassword");
         } else {
